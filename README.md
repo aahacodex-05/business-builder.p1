@@ -1,22 +1,33 @@
 # Mocha Express Coffee
 
-Static website for Mocha Express Coffee (three locations, greater Portland, OR). Plain HTML, CSS and JS with no build step.
+Website and online ordering for Mocha Express Coffee (three locations, greater Portland, OR).
 
-## Run locally
+Built with Next.js and Stripe Checkout. Customers add items to a cart, pick a pickup location and pay through Stripe; the shop sees paid orders in the Stripe dashboard and via the order webhook.
+
+## Setup
 
 ```sh
-python3 -m http.server 8000
+npm install
+cp .env.example .env.local   # add your Stripe keys
+npm run dev
 ```
 
-Then open http://localhost:8000.
+Open http://localhost:3000.
 
-## Ordering
+To receive order webhooks locally, run `stripe listen --forward-to localhost:3000/api/webhooks/stripe` and put the printed secret in `STRIPE_WEBHOOK_SECRET`.
 
-All order buttons link to the existing DinDin menu: https://orderdindin.com/menu-mocha-express
+## Where things live
+
+- `src/data/menu.ts`: menu items and prices (the checkout always uses these server-side prices).
+- `src/data/locations.ts`: shop addresses and map links.
+- `src/lib/hours.ts`: opening hours; checkout is closed outside them.
+- `src/app/api/checkout`: creates the Stripe Checkout session.
+- `src/app/api/webhooks/stripe`: handles paid orders.
 
 ## TODO
 
-- Replace `assets/logo.png` (cropped from a screenshot) with a high-res logo file.
-- Add real addresses, phone numbers and map links for the three locations.
+- Replace `public/logo.png` (cropped from a screenshot) with a high-res logo file.
+- Add real addresses and map links for the three locations.
 - Fill in the full menu and prices.
+- Decide how the shop is notified of new orders (email, SMS or an order screen).
 - Replace the placeholder "Our story" copy.
