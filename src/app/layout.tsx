@@ -1,18 +1,18 @@
 import type { Metadata } from "next";
 import type { ReactNode } from "react";
-import { Fraunces, Inter } from "next/font/google";
+import { Fraunces, Instrument_Sans } from "next/font/google";
 import { CartDrawer } from "@/components/CartDrawer";
 import { Header } from "@/components/Header";
 import { CartProvider } from "@/lib/cart";
 import "./globals.css";
 
-const display = Fraunces({ subsets: ["latin"], weight: ["600", "800"], variable: "--font-display" });
-const body = Inter({ subsets: ["latin"], variable: "--font-body" });
+const display = Fraunces({ subsets: ["latin"], axes: ["SOFT", "WONK", "opsz"], variable: "--font-display" });
+const body = Instrument_Sans({ subsets: ["latin"], variable: "--font-body" });
 
 export const metadata: Metadata = {
   title: "Mocha Express Coffee | Portland, OR",
   description:
-    "Handcrafted espresso, mochas and fresh food at three locations across the greater Portland area. Order online for pickup.",
+    "Cozy Portland coffeehouse with couches, comfortable work tables and handcrafted mochas. Three locations; order ahead for pickup.",
   icons: "/logo.png",
 };
 
@@ -25,8 +25,9 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           {children}
           <CartDrawer />
           <footer className="footer">
-            <img src="/logo.png" alt="Mocha Express Coffee" width={56} height={56} />
-            <p>© {new Date().getFullYear()} Mocha Express Coffee. Greater Portland, Oregon.</p>
+            <img src="/logo.png" alt="" width={64} height={64} />
+            <strong>Mocha Express Coffee</strong>
+            <p>Greater Portland, Oregon · © {new Date().getFullYear()}</p>
           </footer>
         </CartProvider>
       </body>

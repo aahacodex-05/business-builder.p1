@@ -1,93 +1,87 @@
 import { Menu } from "@/components/Menu";
 import { OpenStatus } from "@/components/OpenStatus";
+import { Landscape, TreeLine } from "@/components/Scenery";
+import { Space } from "@/components/Space";
 import { LOCATIONS } from "@/data/locations";
 import { HOURS_LABELS } from "@/lib/hours";
 
 export default function Home() {
   return (
     <main>
-      <section className="hero">
-        <div className="hero__text">
-          <p className="eyebrow">Portland's favorite coffee stop</p>
-          <h1>
-            Good coffee,
-            <br />
-            served <span className="accent">express</span>.
-          </h1>
-          <p className="lead">
-            Handcrafted espresso, signature mochas and fresh bites, made fast and made right at three
-            spots around the greater Portland area.
-          </p>
-          <div className="hero__actions">
-            <a className="btn" href="#menu">
-              Order for Pickup
-            </a>
-            <a className="btn btn--ghost" href="#locations">
-              Find a Location
-            </a>
+      <section className="hero drizzle">
+        <div className="container hero__inner">
+          <div>
+            <p className="eyebrow">Greater Portland, Oregon</p>
+            <h1>
+              Come for the mocha. <span className="accent">Stay for the couch.</span>
+            </h1>
+            <p className="lead">
+              Rain or shine (mostly rain), we pour handcrafted espresso and mochas at three spots around
+              Portland. Grab one to go, or settle in and stay a while.
+            </p>
+            <div className="hero__actions">
+              <a className="btn" href="#menu">
+                Order ahead
+              </a>
+              <a className="btn btn--ghost" href="#space">
+                See the space
+              </a>
+            </div>
+          </div>
+          <div className="hero__sun" aria-hidden="true">
+            <img src="/logo.png" alt="" width={300} height={300} />
           </div>
         </div>
-        <div className="hero__art" aria-hidden="true">
-          <div className="steam">
-            <span />
-            <span />
-            <span />
-          </div>
-          <img src="/logo.png" alt="" width={320} height={320} />
-        </div>
+        <Landscape className="hero__landscape" />
       </section>
+
+      <Space />
 
       <section id="menu" className="section">
-        <div className="section__head">
-          <p className="eyebrow">Order ahead</p>
-          <h2>The menu</h2>
+        <div className="container">
+          <div className="section__head">
+            <p className="eyebrow">The menu</p>
+            <h2>Order ahead, then grab a seat.</h2>
+          </div>
+          <Menu />
         </div>
-        <Menu />
       </section>
 
-      <section id="locations" className="section section--dark">
-        <div className="section__head">
-          <p className="eyebrow">Come say hi</p>
-          <h2>Three locations, one great cup</h2>
-        </div>
-        <div className="locations">
-          {LOCATIONS.map((location) => (
-            <article key={location.id} className="location">
-              <h3>{location.name}</h3>
-              <address>
-                {location.street}
-                <br />
-                {location.city}
-              </address>
-              <a href={location.mapUrl} className="link" target="_blank" rel="noopener">
-                Get directions →
-              </a>
-            </article>
-          ))}
-        </div>
-        <div className="hours">
-          <h3>Hours</h3>
-          <dl>
-            {HOURS_LABELS.map(({ days, time }) => (
-              <div key={days}>
-                <dt>{days}</dt>
-                <dd>{time}</dd>
-              </div>
+      <TreeLine className="treeline" />
+      <section id="locations" className="section locations-band">
+        <div className="container">
+          <div className="section__head">
+            <p className="eyebrow">Find your spot</p>
+            <h2>Three Portland-area shops</h2>
+          </div>
+          <div className="locations">
+            {LOCATIONS.map((location) => (
+              <article key={location.id} className="location">
+                <h3>{location.name}</h3>
+                <address>
+                  {location.street}
+                  <br />
+                  {location.city}
+                </address>
+                <a href={location.mapUrl} className="link" target="_blank" rel="noopener">
+                  Get directions →
+                </a>
+              </article>
             ))}
-          </dl>
-          <OpenStatus />
+          </div>
+          <div className="hours">
+            <h3>Hours</h3>
+            <dl>
+              {HOURS_LABELS.map(({ days, time }) => (
+                <div key={days}>
+                  <dt>{days}</dt>
+                  <dd>{time}</dd>
+                </div>
+              ))}
+            </dl>
+            <OpenStatus />
+          </div>
         </div>
-      </section>
-
-      <section id="about" className="section about">
-        <p className="eyebrow">Our story</p>
-        <h2>Coffee with a smile, on the go</h2>
-        {/* TODO: replace with the shop's real story. */}
-        <p>
-          Mocha Express started with a simple idea: great coffee shouldn't slow you down. Today our
-          three Portland-area shops serve neighbors their morning rituals, afternoon pick-me-ups and
-          everything in between.
-        </p>
       </section>
     </main>
   );

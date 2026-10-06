@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useCart } from "@/lib/cart";
+import { Icon } from "./Icon";
 
 export function Header() {
   const { count, setOpen } = useCart();
@@ -13,12 +14,15 @@ export function Header() {
         <span>Mocha Express</span>
       </Link>
       <nav className="nav__links" aria-label="Main">
-        <a href="/#menu">Menu</a>
-        <a href="/#locations">Locations</a>
-        <a href="/#about">About</a>
+        <Link className="nav__space" href="/#space">
+          The space
+        </Link>
+        <Link href="/#menu">Menu</Link>
+        <Link href="/#locations">Locations</Link>
       </nav>
-      <button className="btn btn--small" onClick={() => setOpen(true)}>
-        Cart{count > 0 && <span className="badge">{count}</span>}
+      <button className="cart-btn" onClick={() => setOpen(true)} aria-label={`Cart (${count})`}>
+        <Icon name="bag" />
+        {count > 0 && <span className="badge">{count}</span>}
       </button>
     </header>
   );
