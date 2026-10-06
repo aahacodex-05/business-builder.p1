@@ -83,7 +83,7 @@ export function CartDrawer() {
                 </option>
                 {LOCATIONS.map((location) => (
                   <option key={location.id} value={location.id}>
-                    {location.name}, {location.street}
+                    {location.name}, {location.city}
                   </option>
                 ))}
               </select>

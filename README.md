@@ -20,14 +20,13 @@ To receive order webhooks locally, run `stripe listen --forward-to localhost:300
 
 - `src/data/menu.ts`: menu items and prices (the checkout always uses these server-side prices).
 - `src/app/menu/[id]`: a page for each menu item.
-- `src/data/locations.ts`: shop addresses and map links.
+- `src/data/locations.ts`: shop names, services and addresses.
 - `src/lib/hours.ts`: opening hours; checkout is closed outside them.
 - `src/app/api/checkout`: creates the Stripe Checkout session.
 - `src/app/api/webhooks/stripe`: handles paid orders.
 
 ## TODO
 
-- Add real addresses and map links for the three locations.
 - Fill in the full menu and prices.
 - Decide how the shop is notified of new orders (email, SMS or an order screen).
 - Swap the lounge illustration and menu item artwork for real photos.

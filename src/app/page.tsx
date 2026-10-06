@@ -2,7 +2,7 @@ import { Menu } from "@/components/Menu";
 import { OpenStatus } from "@/components/OpenStatus";
 import { Landscape, TreeLine } from "@/components/Scenery";
 import { Space } from "@/components/Space";
-import { LOCATIONS } from "@/data/locations";
+import { LOCATIONS, directionsUrl } from "@/data/locations";
 import { HOURS_LABELS } from "@/lib/hours";
 
 export default function Home() {
@@ -58,12 +58,13 @@ export default function Home() {
             {LOCATIONS.map((location) => (
               <article key={location.id} className="location">
                 <h3>{location.name}</h3>
+                <p className="location__services">{location.services.join(" · ")}</p>
                 <address>
                   {location.street}
                   <br />
-                  {location.city}
+                  {location.city}, OR {location.zip}
                 </address>
-                <a href={location.mapUrl} className="link" target="_blank" rel="noopener">
+                <a href={directionsUrl(location)} className="link" target="_blank" rel="noopener">
                   Get directions →
                 </a>
               </article>

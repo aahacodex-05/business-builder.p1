@@ -374,7 +374,15 @@ h1, h2 { font-variation-settings: "SOFT" 100, "WONK" 1; }
   border-radius: var(--radius);
   background: var(--fir-light);
 }
-.location h3 { font-size: 1.45rem; color: var(--orange); margin-bottom: .6rem; }
+.location h3 { font-size: 1.45rem; color: var(--orange); margin-bottom: .3rem; }
+.location__services {
+  margin-bottom: .8rem;
+  font-size: .78rem;
+  font-weight: 600;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: rgb(247 244 238 / 70%);
+}
 .location address { font-style: normal; color: rgb(247 244 238 / 82%); margin-bottom: 1rem; }
 .link { font-weight: 600; text-decoration: none; }
 .link:hover { color: var(--orange); }
