@@ -14,7 +14,7 @@ export const metadata: Metadata = {
   metadataBase: siteUrl ? new URL(siteUrl) : undefined,
   title: "Mocha Express Coffee | Portland, OR",
   description:
-    "Cozy Portland coffeehouse with couches, comfortable work tables and handcrafted mochas. Three locations; order ahead for pickup.",
+    "Cozy Portland coffeehouse with big armchairs, comfortable work tables and handcrafted mochas. Three locations; order ahead for pickup.",
   twitter: { card: "summary_large_image" },
 };
 

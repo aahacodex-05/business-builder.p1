@@ -13,7 +13,7 @@ export default function Home() {
           <div>
             <p className="eyebrow">Greater Portland, Oregon</p>
             <h1>
-              Come for the mocha. <span className="accent">Stay for the couch.</span>
+              Come for the mocha. <span className="accent">Stay for the armchair.</span>
             </h1>
             <p className="lead">
               Rain or shine (mostly rain), we pour handcrafted espresso and mochas at three spots around

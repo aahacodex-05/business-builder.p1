@@ -2,7 +2,7 @@ import { CozyCorner } from "./CozyCorner";
 import { Icon, type IconName } from "./Icon";
 
 const AMENITIES: { icon: IconName; title: string; text: string }[] = [
-  { icon: "couch", title: "Couches", text: "Sink in with a mocha, a book or a friend." },
+  { icon: "armchair", title: "Big armchairs", text: "Basically a couch for one. Sink in with a mocha or a book." },
   { icon: "laptop", title: "Comfortable work tables", text: "Room for the laptop, the notebook and the second coffee." },
   // TODO: confirm the shops offer free Wi-Fi.
   { icon: "wifi", title: "Free Wi-Fi", text: "Hop on and get some work done." },
@@ -17,8 +17,8 @@ export function Space() {
           <p className="eyebrow">The space</p>
           <h2>Stay a while.</h2>
           <p className="lead">
-            Sink into a couch with a mocha, or claim a comfortable table and get some work done. Rainy
-            Portland afternoons were made for this.
+            Sink into an oversized armchair with a mocha, or claim a comfortable table and get some work
+            done. Rainy Portland afternoons were made for this.
           </p>
           <ul className="amenities">
             {AMENITIES.map(({ icon, title, text }) => (

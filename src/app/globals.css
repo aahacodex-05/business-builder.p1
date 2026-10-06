@@ -244,9 +244,12 @@ h1, h2 { font-variation-settings: "SOFT" 100, "WONK" 1; }
 .cozy__rug { fill: rgb(243 162 28 / 16%); }
 .cozy__leaf { fill: var(--moss); }
 .cozy__pot { fill: var(--orange-deep); }
-.cozy__couch { fill: #2f5a45; }
-.cozy__arm { fill: #284e3c; }
-.cozy__cushion { fill: #3c6b53; }
+.cozy__chair--green { --body: #2f5a45; --arm: #284e3c; --seat: #3c6b53; }
+.cozy__chair--caramel { --body: #a0612f; --arm: #8a5228; --seat: #b5713a; }
+.cozy__body { fill: var(--body); }
+.cozy__arm { fill: var(--arm); }
+.cozy__seat { fill: var(--seat); }
+.cozy__seam { fill: none; stroke: var(--arm); stroke-width: 3; stroke-linecap: round; }
 .cozy__pillow, .cozy__shade { fill: var(--orange); }
 .cozy__dark { fill: #140b08; }
 .cozy__laptop { fill: #cfc8bd; }
@@ -260,6 +263,7 @@ h1, h2 { font-variation-settings: "SOFT" 100, "WONK" 1; }
   animation: rise 3s ease-in-out infinite;
 }
 .cozy__wood { fill: var(--walnut); }
+.cozy__desk-chair { fill: #553527; }
 
 /* Menu */
 .tabs { display: flex; justify-content: center; gap: .5rem; margin-bottom: 2rem; }
