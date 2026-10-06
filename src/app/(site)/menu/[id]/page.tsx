@@ -16,18 +16,23 @@ export function generateStaticParams() {
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const item = findItem((await params).id);
-  return item ? { title: `${item.name} | Mocha Express Coffee`, description: item.description } : {};
+  return item
+    ? {
+        title: `${item.name} | Mocha Express Coffee`,
+        description: item.description ?? `${item.name}, ${formatPrice(item.price)}. Order ahead for pickup in Portland.`,
+      }
+    : {};
 }
 
 export default async function ItemPage({ params }: Props) {
   const item = findItem((await params).id);
   if (!item) notFound();
 
-  const related = MENU.filter((other) => other.category === item.category && other.id !== item.id);
+  const related = MENU.filter((other) => other.category === item.category && other.id !== item.id).slice(0, 3);
 
   return (
     <main className="container item-page">
-      <Link className="back" href="/#menu">
+      <Link className="back" href={`/menu#${item.category}`}>
         ← Back to the menu
       </Link>
       <div className="item-page__grid">
@@ -36,7 +41,7 @@ export default async function ItemPage({ params }: Props) {
           <p className="eyebrow">{categoryLabel(item.category)}</p>
           <h1>{item.name}</h1>
           <p className="item-page__price">{formatPrice(item.price)}</p>
-          <p className="lead">{item.description}</p>
+          {item.description && <p className="lead">{item.description}</p>}
           <AddToCart item={item} />
           <p className="item-page__note">Order ahead and pick it up at any of our three Portland-area shops.</p>
         </div>

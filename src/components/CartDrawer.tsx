@@ -4,6 +4,7 @@ import { useEffect, useState, type FormEvent } from "react";
 import { LOCATIONS } from "@/data/locations";
 import { findItem, formatPrice } from "@/data/menu";
 import { useCart } from "@/lib/cart";
+import { isOpen as isShopOpen } from "@/lib/hours";
 
 export function CartDrawer() {
   const { lines, subtotal, isOpen, setOpen, setQuantity } = useCart();
@@ -11,6 +12,12 @@ export function CartDrawer() {
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [closedIds, setClosedIds] = useState<string[]>([]);
+
+  // Which shops are closed is only known in the browser, so it's worked out when the cart opens.
+  useEffect(() => {
+    if (isOpen) setClosedIds(LOCATIONS.filter(({ hours }) => !isShopOpen(hours)).map(({ id }) => id));
+  }, [isOpen]);
 
   useEffect(() => {
     const onKey = (event: KeyboardEvent) => event.key === "Escape" && setOpen(false);
@@ -82,8 +89,9 @@ export function CartDrawer() {
                   Choose a shop
                 </option>
                 {LOCATIONS.map((location) => (
-                  <option key={location.id} value={location.id}>
+                  <option key={location.id} value={location.id} disabled={closedIds.includes(location.id)}>
                     {location.name}, {location.city}
+                    {closedIds.includes(location.id) && " (closed)"}
                   </option>
                 ))}
               </select>

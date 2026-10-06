@@ -17,7 +17,7 @@ export function Header() {
         <Link className="nav__space" href="/#space">
           The space
         </Link>
-        <Link href="/#menu">Menu</Link>
+        <Link href="/menu">Menu</Link>
         <Link href="/#locations">Locations</Link>
       </nav>
       <button className="cart-btn" onClick={() => setOpen(true)} aria-label={`Cart (${count})`}>

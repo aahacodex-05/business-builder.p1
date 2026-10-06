@@ -1,9 +1,11 @@
-import { Menu } from "@/components/Menu";
+import Link from "next/link";
+import { MenuCard } from "@/components/MenuCard";
 import { OpenStatus } from "@/components/OpenStatus";
 import { Landscape, TreeLine } from "@/components/Scenery";
 import { Space } from "@/components/Space";
-import { LOCATIONS, directionsUrl } from "@/data/locations";
-import { HOURS_LABELS } from "@/lib/hours";
+import { LOCATIONS, directionsUrl, phoneUrl } from "@/data/locations";
+import { POPULAR } from "@/data/menu";
+import { hoursLabels } from "@/lib/hours";
 
 export default function Home() {
   return (
@@ -20,9 +22,9 @@ export default function Home() {
               Portland. Grab one to go, or settle in and stay a while.
             </p>
             <div className="hero__actions">
-              <a className="btn" href="#menu">
+              <Link className="btn" href="/menu">
                 Order ahead
-              </a>
+              </Link>
               <a className="btn btn--ghost" href="#space">
                 See the space
               </a>
@@ -43,7 +45,16 @@ export default function Home() {
             <p className="eyebrow">The menu</p>
             <h2>Order ahead, then grab a seat.</h2>
           </div>
-          <Menu />
+          <ul className="menu menu--featured">
+            {POPULAR.map((item) => (
+              <MenuCard key={item.id} item={item} />
+            ))}
+          </ul>
+          <div className="section__foot">
+            <Link className="btn" href="/menu">
+              See the full menu
+            </Link>
+          </div>
         </div>
       </section>
 
@@ -63,24 +74,23 @@ export default function Home() {
                   {location.street}
                   <br />
                   {location.city}, OR {location.zip}
+                  <br />
+                  <a href={phoneUrl(location)}>{location.phone}</a>
                 </address>
+                <dl className="location__hours">
+                  {hoursLabels(location.hours).map(({ days, time }) => (
+                    <div key={days}>
+                      <dt>{days}</dt>
+                      <dd>{time}</dd>
+                    </div>
+                  ))}
+                </dl>
+                <OpenStatus hours={location.hours} />
                 <a href={directionsUrl(location)} className="link" target="_blank" rel="noopener">
                   Get directions →
                 </a>
               </article>
             ))}
-          </div>
-          <div className="hours">
-            <h3>Hours</h3>
-            <dl>
-              {HOURS_LABELS.map(({ days, time }) => (
-                <div key={days}>
-                  <dt>{days}</dt>
-                  <dd>{time}</dd>
-                </div>
-              ))}
-            </dl>
-            <OpenStatus />
           </div>
         </div>
       </section>

@@ -27,8 +27,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     try {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) setLines(JSON.parse(saved));
+      const saved: Lines = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "{}");
+      // Drop items that have since left the menu.
+      setLines(Object.fromEntries(Object.entries(saved).filter(([id]) => findItem(id))));
     } catch {}
   }, []);
 

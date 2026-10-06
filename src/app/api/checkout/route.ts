@@ -18,7 +18,7 @@ export async function POST(request: Request) {
   const location = findLocation(locationId);
   if (!location) return error("Pick a pickup location.");
   if (!name?.trim()) return error("Add a name for the order.");
-  if (!isOpen()) return error("We're closed right now. Online ordering opens with the shop.");
+  if (!isOpen(location.hours)) return error(`${location.name} is closed right now. Online ordering opens with the shop.`);
 
   // Prices always come from the server-side menu, never from the client.
   const items = Object.entries(lines ?? {}).flatMap(([id, quantity]) => {
@@ -30,7 +30,7 @@ export async function POST(request: Request) {
   if (items.length === 0) return error("Your cart is empty.");
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
-  const metadata = { location: location.name, pickupName: name.trim().slice(0, 80) };
+  const metadata = { locationId: location.id, location: location.name, pickupName: name.trim().slice(0, 80) };
 
   try {
     const session = await stripe().checkout.sessions.create({
@@ -47,7 +47,7 @@ export async function POST(request: Request) {
       payment_intent_data: { metadata },
       phone_number_collection: { enabled: true },
       success_url: `${siteUrl}/order/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/#menu`,
+      cancel_url: `${siteUrl}/menu`,
     });
     return NextResponse.json({ url: session.url });
   } catch (err) {

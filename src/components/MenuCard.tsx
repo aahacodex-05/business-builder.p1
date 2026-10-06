@@ -14,7 +14,7 @@ export function MenuCard({ item }: { item: MenuItem }) {
           {item.name}
         </Link>
       </h3>
-      <p>{item.description}</p>
+      {item.description && <p>{item.description}</p>}
       <div className="item__foot">
         <span className="price">{formatPrice(item.price)}</span>
         <button className="add" onClick={() => add(item.id)} aria-label={`Add ${item.name}`}>
