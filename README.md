@@ -27,7 +27,6 @@ To receive order webhooks locally, run `stripe listen --forward-to localhost:300
 
 ## TODO
 
-- Replace `public/logo.png` (cropped from a screenshot) with a high-res logo file.
 - Add real addresses and map links for the three locations.
 - Fill in the full menu and prices.
 - Decide how the shop is notified of new orders (email, SMS or an order screen).

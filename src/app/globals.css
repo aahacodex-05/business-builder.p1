@@ -464,7 +464,6 @@ h1, h2 { font-variation-settings: "SOFT" 100, "WONK" 1; }
   text-align: center;
 }
 .confirm h1 { font-size: clamp(2rem, 5vw, 3rem); }
-.confirm img { border-radius: 50%; }
 .confirm p { color: var(--muted); font-size: 1.1rem; }
 
 /* Footer */
@@ -479,7 +478,7 @@ h1, h2 { font-variation-settings: "SOFT" 100, "WONK" 1; }
   font-size: .9rem;
   text-align: center;
 }
-.footer img { margin-bottom: .5rem; border-radius: 50%; }
+.footer img { margin-bottom: .5rem; }
 .footer strong { font-family: var(--display); font-size: 1.25rem; color: var(--paper); }
 
 @keyframes drizzle { to { background-position: -120px 720px; } }
