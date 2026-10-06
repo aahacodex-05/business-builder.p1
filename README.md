@@ -16,7 +16,7 @@ Open http://localhost:3000.
 
 ## Order screen for the shops
 
-Each shop opens `/orders` on its tablet, signs in with `STAFF_PASSCODE` and picks its shop. The screen lists that shop's paid orders from today (read from Stripe), refreshes every 15 seconds, can chime when an order arrives, and has a "Picked up" button on each order. Set the tablet to never sleep.
+Each shop opens `/orders` on its tablet (there's a small Staff link in the site footer), signs in with `STAFF_PASSCODE` and picks its shop. The screen lists that shop's paid orders from today (read from Stripe), refreshes every 15 seconds, can chime when an order arrives, and has a "Picked up" button on each order. Set the tablet to never sleep.
 
 ## Where things live
 

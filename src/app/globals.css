@@ -583,6 +583,8 @@ h1, h2 { font-variation-settings: "SOFT" 100, "WONK" 1; }
 }
 .footer img { margin-bottom: .5rem; }
 .footer strong { font-family: var(--display); font-size: 1.25rem; color: var(--paper); }
+.footer__staff { margin-top: .5rem; font-size: .8rem; color: rgb(247 244 238 / 55%); text-decoration: none; }
+.footer__staff:hover { color: var(--paper); text-decoration: underline; }
 
 @keyframes drizzle { to { background-position: -120px 720px; } }
 @keyframes float { 50% { transform: translateY(-8px) rotate(-3deg); } }
