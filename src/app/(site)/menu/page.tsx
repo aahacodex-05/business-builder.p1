@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { MenuCard } from "@/components/MenuCard";
 import { MenuNav } from "@/components/MenuNav";
+import { PickupShop } from "@/components/PickupShop";
 import { CATEGORIES, MENU, POPULAR } from "@/data/menu";
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default function MenuPage() {
       <div className="container section__head">
         <p className="eyebrow">The menu</p>
         <h1>Order ahead, then grab a seat.</h1>
+        <PickupShop />
       </div>
       <MenuNav sections={SECTIONS.map(({ id, label }) => ({ id, label }))} />
       <div className="container">

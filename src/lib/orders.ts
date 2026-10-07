@@ -1,10 +1,12 @@
 import type Stripe from "stripe";
+import { findLocation } from "@/data/locations";
+import { StaffError } from "@/lib/errors";
 import { startOfDay } from "@/lib/hours";
 import { stripe } from "@/lib/stripe";
 
 export type Order = {
+  /** The Stripe payment intent id, which is also what marks the order picked up. */
   id: string;
-  paymentIntentId: string;
   placedAt: Date;
   name: string;
   phone?: string;
@@ -28,8 +30,7 @@ export async function todaysOrders(locationId: string) {
     if (session.metadata?.locationId !== locationId || session.payment_status !== "paid" || !intent) continue;
 
     orders.push({
-      id: session.id,
-      paymentIntentId: intent.id,
+      id: intent.id,
       placedAt: new Date(session.created * 1000),
       name: session.metadata.pickupName,
       phone: session.customer_details?.phone ?? undefined,
@@ -53,6 +54,18 @@ async function lineItems(session: Stripe.Checkout.Session) {
   return (await stripe().checkout.sessions.listLineItems(session.id, { limit: 100 })).data;
 }
 
-export async function markPickedUp(paymentIntentId: string) {
-  await stripe().paymentIntents.update(paymentIntentId, { metadata: { pickedUp: "yes" } });
+/** Marks a paid order picked up. Pass the employee's shop to refuse orders from any other shop. */
+export async function markPickedUp(orderId: string, shop?: string) {
+  const intent = await stripe()
+    .paymentIntents.retrieve(orderId)
+    .catch((error) => {
+      if (error.statusCode === 404) return undefined;
+      throw error;
+    });
+  const location = findLocation(intent?.metadata.locationId ?? "");
+  if (intent?.status !== "succeeded" || !location || (shop && shop !== location.id)) {
+    throw new StaffError("Order not found.", 404);
+  }
+
+  await stripe().paymentIntents.update(orderId, { metadata: { pickedUp: "yes" } });
 }

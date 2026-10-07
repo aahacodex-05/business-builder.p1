@@ -1,18 +1,20 @@
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { OrderAlerts } from "@/components/staff/OrderAlerts";
-import { SignIn } from "@/components/staff/SignIn";
 import { findLocation } from "@/data/locations";
 import { formatPrice } from "@/data/menu";
 import { formatTime } from "@/lib/hours";
 import { todaysOrders, type Order } from "@/lib/orders";
-import { isStaff } from "@/lib/staff";
-import { markPickedUp } from "../actions";
+import { canSee, webStaff } from "@/lib/staff";
+import { markPickedUp, signOut } from "../actions";
 
 export default async function ShopOrders({ params }: { params: Promise<{ shop: string }> }) {
   const location = findLocation((await params).shop);
   if (!location) notFound();
-  if (!(await isStaff())) return <SignIn />;
+
+  // Employees only see their own shop; /orders sends them to it.
+  const staff = await webStaff();
+  if (!staff || !canSee(staff, location.id)) redirect("/orders");
 
   const orders = await todaysOrders(location.id);
   const waiting = orders.filter((order) => !order.pickedUp);
@@ -22,13 +24,20 @@ export default async function ShopOrders({ params }: { params: Promise<{ shop: s
     <div className="staff__board">
       <header className="staff__head">
         <div>
-          <p className="eyebrow">Mocha Express</p>
+          <p className="eyebrow">Mocha Express{staff.role === "employee" && ` · ${staff.name}`}</p>
           <h1>{location.name} orders</h1>
         </div>
-        <OrderAlerts waitingIds={waiting.map((order) => order.id)} />
-        <Link className="staff__link" href="/orders">
-          Switch shop
-        </Link>
+        <div className="staff__tools">
+          <OrderAlerts waitingIds={waiting.map((order) => order.id)} />
+          {staff.role === "owner" && (
+            <Link className="staff__link" href="/orders/owner">
+              Owner page
+            </Link>
+          )}
+          <form action={signOut}>
+            <button className="staff__link">Sign out</button>
+          </form>
+        </div>
       </header>
 
       {waiting.length === 0 ? (
@@ -73,7 +82,7 @@ function OrderCard({ order }: { order: Order }) {
         {formatPrice(order.total)} paid{order.phone && <> · {order.phone}</>}
       </p>
       {!order.pickedUp && (
-        <form action={markPickedUp.bind(null, order.paymentIntentId)}>
+        <form action={markPickedUp.bind(null, order.id)}>
           <button className="btn btn--block">Picked up</button>
         </form>
       )}

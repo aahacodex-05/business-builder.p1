@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { MenuCard } from "@/components/MenuCard";
 import { OpenStatus } from "@/components/OpenStatus";
+import { OrderHere } from "@/components/OrderHere";
 import { Landscape, TreeLine } from "@/components/Scenery";
 import { Space } from "@/components/Space";
 import { LOCATIONS, directionsUrl, phoneUrl } from "@/data/locations";
@@ -86,9 +87,12 @@ export default function Home() {
                   ))}
                 </dl>
                 <OpenStatus hours={location.hours} />
-                <a href={directionsUrl(location)} className="link" target="_blank" rel="noopener">
-                  Get directions →
-                </a>
+                <div className="location__actions">
+                  <OrderHere locationId={location.id} />
+                  <a href={directionsUrl(location)} className="link" target="_blank" rel="noopener">
+                    Get directions →
+                  </a>
+                </div>
               </article>
             ))}
           </div>
