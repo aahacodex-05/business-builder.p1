@@ -1,6 +1,9 @@
 import { Ionicons } from "@expo/vector-icons";
+import { router } from "expo-router";
 import { Linking, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import type { Location } from "../../src/api";
+import { useCart } from "../../src/cart";
+import { Button } from "../../src/components/Button";
 import { useCatalog } from "../../src/catalog";
 import { colors, fonts, radius } from "../../src/theme";
 
@@ -17,6 +20,8 @@ export default function ShopsScreen() {
 }
 
 function Shop({ location }: { location: Location }) {
+  const { setLocationId } = useCart();
+
   return (
     <View style={styles.card}>
       <View style={styles.cardHead}>
@@ -44,6 +49,17 @@ function Shop({ location }: { location: Location }) {
       <View style={styles.actions}>
         <Action icon="call-outline" label={location.phone} url={location.phoneUrl} />
         <Action icon="navigate-outline" label="Directions" url={location.directionsUrl} />
+      </View>
+
+      <View style={styles.order}>
+        <Button
+          label={location.open ? "Order here" : "Closed now"}
+          disabled={!location.open}
+          onPress={() => {
+            setLocationId(location.id);
+            router.navigate("/");
+          }}
+        />
       </View>
     </View>
   );
@@ -98,5 +114,6 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(247,244,238,0.1)",
   },
   actionPressed: { backgroundColor: "rgba(247,244,238,0.2)" },
+  order: { marginTop: 12 },
   actionLabel: { fontFamily: fonts.bold, fontSize: 14, color: colors.paper },
 });

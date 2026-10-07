@@ -12,7 +12,8 @@ import { colors, fonts, radius } from "../../src/theme";
 const CHIP_BAR_HEIGHT = 60;
 
 export default function MenuScreen() {
-  const { categories, menu, popular } = useCatalog();
+  const { categories, menu, popular, locations } = useCatalog();
+  const pickup = locations.find(({ id }) => id === useCart().locationId);
   const insets = useSafeAreaInsets();
   const scroll = useRef<ScrollView>(null);
   const offsets = useRef<Record<string, number>>({});
@@ -52,7 +53,11 @@ export default function MenuScreen() {
         <Text style={styles.title}>
           Order ahead, <Text style={styles.accent}>then grab a seat.</Text>
         </Text>
-        <Text style={styles.lead}>Pick up at any of our three shops. Paid in the app, made when you order.</Text>
+        <Text style={styles.lead}>
+          {pickup
+            ? `Picking up at ${pickup.name}. You can change shops in your bag.`
+            : "Pick up at any of our three shops. Paid in the app, made when you order."}
+        </Text>
       </View>
 
       <ScrollView

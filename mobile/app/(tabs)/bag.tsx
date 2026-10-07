@@ -15,8 +15,7 @@ import { colors, fonts, radius } from "../../src/theme";
 export default function BagScreen() {
   const { menu, locations } = useCatalog();
   const { refresh } = useCatalogStatus();
-  const { lines, count, subtotal, setQuantity } = useCart();
-  const [locationId, setLocationId] = useState<string>();
+  const { lines, count, subtotal, setQuantity, locationId, setLocationId } = useCart();
   const [name, setName] = useState("");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string>();

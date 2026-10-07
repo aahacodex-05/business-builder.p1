@@ -11,6 +11,9 @@ type Cart = {
   lines: Lines;
   count: number;
   subtotal: number;
+  /** The shop picked for pickup, from the Shops tab or the bag. */
+  locationId?: string;
+  setLocationId: (id: string) => void;
   add: (id: string, quantity?: number) => void;
   setQuantity: (id: string, quantity: number) => void;
   clear: () => void;
@@ -22,6 +25,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const { menu } = useCatalog();
   const [saved, setLines] = useState<Lines>({});
   const [restored, setRestored] = useState(false);
+  const [locationId, setLocationId] = useState<string>();
 
   useEffect(() => {
     AsyncStorage.getItem(STORAGE_KEY)
@@ -54,11 +58,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
       lines: Object.fromEntries(entries),
       count: entries.reduce((sum, [, qty]) => sum + qty, 0),
       subtotal: entries.reduce((sum, [id, qty]) => sum + prices.get(id)! * qty, 0),
+      locationId,
+      setLocationId,
       add,
       setQuantity,
       clear,
     };
-  }, [menu, saved, add, setQuantity, clear]);
+  }, [menu, saved, locationId, add, setQuantity, clear]);
 
   return <CartContext value={value}>{children}</CartContext>;
 }
