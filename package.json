@@ -1,5 +1,5 @@
 {
-  "name": "the-business-builder",
+  "name": "milepost",
   "private": true,
   "type": "module",
   "engines": { "node": ">=22.13" },

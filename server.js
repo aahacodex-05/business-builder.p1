@@ -107,5 +107,5 @@ app.use((err, req, res, next) => {
 });
 
 const port = Number(process.env.PORT) || 3000;
-app.listen(port, () => console.log(`The Business Builder running on http://localhost:${port}`));
+app.listen(port, () => console.log(`Milepost running on http://localhost:${port}`));
 startAlertScheduler();

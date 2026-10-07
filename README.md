@@ -1,4 +1,4 @@
-# The Business Builder
+# Milepost
 
 Business website with client accounts. A client's plan, paid on their account, includes an AI assistant (Claude) and email alerts before each deadline (7 days, 1 day and 1 hour by default).
 

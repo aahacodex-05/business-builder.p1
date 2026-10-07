@@ -48,7 +48,7 @@ export async function sendDueAlerts(now = new Date()) {
       await sendMail({
         to: row.email,
         subject: `Reminder: ${row.title} is due in ${left}`,
-        text: `Hi ${row.name},\n\n"${row.title}" is due in ${left} (${when}).\n\nThe Business Builder`,
+        text: `Hi ${row.name},\n\n"${row.title}" is due in ${left} (${when}).\n\nMilepost`,
       });
       for (const m of windows) markSent.run(row.id, m);
     } catch (err) {
