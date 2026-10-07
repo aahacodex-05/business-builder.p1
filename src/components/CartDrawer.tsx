@@ -7,8 +7,7 @@ import { useCart } from "@/lib/cart";
 import { isOpen as isShopOpen } from "@/lib/hours";
 
 export function CartDrawer() {
-  const { lines, subtotal, isOpen, setOpen, setQuantity } = useCart();
-  const [locationId, setLocationId] = useState("");
+  const { lines, subtotal, isOpen, setOpen, setQuantity, locationId, setLocationId } = useCart();
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -84,7 +83,11 @@ export function CartDrawer() {
 
             <label>
               Pickup location
-              <select required value={locationId} onChange={(e) => setLocationId(e.target.value)}>
+              <select
+                required
+                value={closedIds.includes(locationId) ? "" : locationId}
+                onChange={(e) => setLocationId(e.target.value)}
+              >
                 <option value="" disabled>
                   Choose a shop
                 </option>

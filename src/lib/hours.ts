@@ -37,6 +37,9 @@ export function startOfDay(date = new Date()) {
 export const formatTime = (date: Date) =>
   date.toLocaleTimeString("en-US", { timeZone: TIME_ZONE, hour: "numeric", minute: "2-digit" });
 
+export const formatDate = (date: Date) =>
+  date.toLocaleDateString("en-US", { timeZone: TIME_ZONE, month: "short", day: "numeric" });
+
 const formatSpan = ([open, close]: Span) => `${formatHour(open)} – ${formatHour(close)}`;
 
 const formatHour = (hour: number) =>

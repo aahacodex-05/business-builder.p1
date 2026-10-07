@@ -1,28 +1,29 @@
 import Link from "next/link";
-import { SignIn } from "@/components/staff/SignIn";
-import { LOCATIONS } from "@/data/locations";
-import { isStaff } from "@/lib/staff";
-import { signOut } from "./actions";
+import { redirect } from "next/navigation";
+import { AuthForm } from "@/components/staff/AuthForm";
+import { webStaff } from "@/lib/staff";
+import { signIn } from "./actions";
 
 export default async function StaffHome() {
-  if (!(await isStaff())) return <SignIn />;
+  const staff = await webStaff();
+  if (staff) redirect(staff.role === "owner" ? "/orders/owner" : `/orders/${staff.shop}`);
 
   return (
-    <div className="staff__home">
-      <img src="/logo.png" alt="" width={96} height={96} />
-      <h1>Which shop is this tablet for?</h1>
-      <ul>
-        {LOCATIONS.map(({ id, name }) => (
-          <li key={id}>
-            <Link className="btn btn--block" href={`/orders/${id}`}>
-              {name}
-            </Link>
-          </li>
-        ))}
-      </ul>
-      <form action={signOut}>
-        <button className="staff__link">Sign out</button>
-      </form>
-    </div>
+    <AuthForm
+      title="Staff sign-in"
+      submit="Sign in"
+      action={signIn}
+      fields={[
+        { name: "number", label: "Employee number", inputMode: "numeric", autoComplete: "username" },
+        { name: "password", label: "Password", type: "password", autoComplete: "current-password" },
+      ]}
+    >
+      <p>
+        New here? <Link href="/orders/signup">Sign up</Link>
+      </p>
+      <Link className="staff__link" href="/orders/owner">
+        Owner sign-in
+      </Link>
+    </AuthForm>
   );
 }

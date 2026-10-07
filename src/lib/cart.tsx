@@ -14,6 +14,9 @@ type Cart = {
   subtotal: number;
   isOpen: boolean;
   setOpen: (open: boolean) => void;
+  /** The shop chosen for pickup; "" until one is. */
+  locationId: string;
+  setLocationId: (id: string) => void;
   add: (id: string) => void;
   setQuantity: (id: string, quantity: number) => void;
   clear: () => void;
@@ -24,6 +27,7 @@ const CartContext = createContext<Cart | null>(null);
 export function CartProvider({ children }: { children: ReactNode }) {
   const [lines, setLines] = useState<Lines>({});
   const [isOpen, setOpen] = useState(false);
+  const [locationId, setLocationId] = useState("");
 
   useEffect(() => {
     try {
@@ -61,6 +65,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       subtotal: entries.reduce((sum, [id, qty]) => sum + (findItem(id)?.price ?? 0) * qty, 0),
       isOpen,
       setOpen,
+      locationId,
+      setLocationId,
       add: (id) => {
         setQuantity(id, (lines[id] ?? 0) + 1);
         setOpen(true);
@@ -68,7 +74,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setQuantity,
       clear,
     };
-  }, [lines, isOpen, setQuantity, clear]);
+  }, [lines, isOpen, locationId, setQuantity, clear]);
 
   return <CartContext value={value}>{children}</CartContext>;
 }
