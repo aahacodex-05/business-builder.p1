@@ -8,7 +8,8 @@ import { REMINDER_OFFSETS_MINUTES, describeOffset, dueReminder, formatDue } from
 const LOOKAHEAD_MS = Math.max(...REMINDER_OFFSETS_MINUTES) * 60 * 1000;
 
 export async function GET(req: Request) {
-  if (req.headers.get("authorization") !== `Bearer ${process.env.CRON_SECRET}`) {
+  const secret = process.env.CRON_SECRET;
+  if (!secret || req.headers.get("authorization") !== `Bearer ${secret}`) {
     return new Response("Unauthorized", { status: 401 });
   }
 
@@ -38,6 +39,14 @@ export async function GET(req: Request) {
     const reminder = dueReminder(deadline.dueAt, now, already);
     if (!reminder) continue;
 
+    // Claim the alert before sending so overlapping runs can't both send it.
+    const claimed = await db
+      .insert(remindersSent)
+      .values(reminder.coveredOffsets.map((offsetMinutes) => ({ deadlineId: deadline.id, offsetMinutes })))
+      .onConflictDoNothing()
+      .returning({ offsetMinutes: remindersSent.offsetMinutes });
+    if (!claimed.some((c) => c.offsetMinutes === reminder.offsetMinutes)) continue;
+
     try {
       await sendEmail(
         user.email,
@@ -46,16 +55,19 @@ export async function GET(req: Request) {
           (deadline.notes ? `\n\n${deadline.notes}` : "") +
           `\n\nManage your deadlines: ${process.env.APP_URL}/dashboard\n\nThe Business Builder`,
       );
+      sent++;
     } catch (error) {
-      // Leave it unrecorded so the next run retries; don't block other users' alerts.
+      // Release the claim so the next run retries; don't block other users' alerts.
       console.error(error);
-      continue;
+      await db
+        .delete(remindersSent)
+        .where(
+          and(
+            eq(remindersSent.deadlineId, deadline.id),
+            inArray(remindersSent.offsetMinutes, claimed.map((c) => c.offsetMinutes)),
+          ),
+        );
     }
-    await db
-      .insert(remindersSent)
-      .values(reminder.coveredOffsets.map((offsetMinutes) => ({ deadlineId: deadline.id, offsetMinutes })))
-      .onConflictDoNothing();
-    sent++;
   }
 
   return Response.json({ sent });
