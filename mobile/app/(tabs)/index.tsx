@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { router } from "expo-router";
+import { Link, router } from "expo-router";
 import { useMemo, useRef, useState } from "react";
 import { Image, Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -82,6 +82,15 @@ export default function MenuScreen() {
           ))}
         </View>
       ))}
+
+      <View style={styles.footer}>
+        <Image source={require("../../assets/logo.png")} style={styles.footerLogo} accessibilityIgnoresInvertColors />
+        <Text style={styles.footerName}>Mocha Express Coffee</Text>
+        <Text style={styles.footerText}>Greater Portland, Oregon · © {new Date().getFullYear()}</Text>
+        <Link href="/staff" style={styles.staffLink}>
+          Staff
+        </Link>
+      </View>
     </ScrollView>
   );
 }
@@ -120,7 +129,12 @@ function MenuRow({ item }: { item: MenuItem }) {
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: colors.paper },
-  content: { paddingBottom: 24 },
+  content: { paddingBottom: 16 },
+  footer: { alignItems: "center", gap: 4, paddingTop: 32 },
+  footerLogo: { width: 48, height: 48, marginBottom: 4 },
+  footerName: { fontFamily: fonts.bold, fontSize: 15, color: colors.ink },
+  footerText: { fontFamily: fonts.body, fontSize: 13, color: colors.muted },
+  staffLink: { fontFamily: fonts.body, fontSize: 12, color: colors.muted, opacity: 0.7, padding: 8 },
   hero: { alignItems: "center", paddingHorizontal: 24, paddingBottom: 32, backgroundColor: colors.sky },
   logo: { width: 104, height: 104, marginBottom: 16 },
   eyebrow: {

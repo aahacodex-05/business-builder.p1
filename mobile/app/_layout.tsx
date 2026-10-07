@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { CartProvider } from "../src/cart";
 import { CatalogProvider, useCatalogStatus } from "../src/catalog";
 import { Notice } from "../src/components/Notice";
+import { StaffProvider } from "../src/staff";
 import { colors, fonts } from "../src/theme";
 
 SplashScreen.preventAutoHideAsync();
@@ -47,20 +48,24 @@ function App() {
 
   return (
     <CartProvider>
-      <Stack
-        screenOptions={{
-          headerTintColor: colors.espresso,
-          headerTitleStyle: { fontFamily: fonts.display },
-          headerStyle: { backgroundColor: colors.paper },
-          headerShadowVisible: false,
-          headerBackButtonDisplayMode: "minimal",
-          contentStyle: { backgroundColor: colors.paper },
-        }}
-      >
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="item/[id]" options={{ title: "", presentation: "modal" }} />
-        <Stack.Screen name="order" options={{ headerShown: false, gestureEnabled: false }} />
-      </Stack>
+      <StaffProvider>
+        <Stack
+          screenOptions={{
+            headerTintColor: colors.espresso,
+            headerTitleStyle: { fontFamily: fonts.display },
+            headerStyle: { backgroundColor: colors.paper },
+            headerShadowVisible: false,
+            headerBackButtonDisplayMode: "minimal",
+            contentStyle: { backgroundColor: colors.paper },
+          }}
+        >
+          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+          <Stack.Screen name="item/[id]" options={{ title: "", presentation: "modal" }} />
+          <Stack.Screen name="order" options={{ headerShown: false, gestureEnabled: false }} />
+          <Stack.Screen name="staff/index" options={{ title: "Staff" }} />
+          <Stack.Screen name="staff/[shop]" options={{ title: "Orders" }} />
+        </Stack>
+      </StaffProvider>
     </CartProvider>
   );
 }

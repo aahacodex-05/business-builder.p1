@@ -26,6 +26,13 @@ Checkout opens Stripe in the phone's browser. In a store build it closes itself 
 | `POST /api/checkout` with `from: "app"` | Starts Stripe Checkout; returns `url` and `id` |
 | `GET /api/app/orders/:id` | Whether a checkout was paid, for the confirmation screen |
 | `GET /order/app` | Stripe's return page; sends the customer back into the app |
+| `GET /api/app/staff` | Checks the staff passcode (sent as `Authorization: Bearer`) |
+| `GET /api/app/staff/:shop` | A shop's paid pickup orders from today |
+| `POST /api/app/staff/:shop` | Marks an order picked up |
+
+## Staff
+
+A small "Staff" link at the bottom of the menu, like the site's footer link, opens the staff sign-in. It uses the site's `STAFF_PASSCODE`, stays signed in on the device, and shows each shop's orders, refreshing every 15 seconds and buzzing when a new one arrives.
 
 ## Publishing
 

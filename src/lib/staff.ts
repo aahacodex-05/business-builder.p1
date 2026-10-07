@@ -15,6 +15,13 @@ export async function isStaff() {
   return Boolean(passcode && saved && matches(Buffer.from(saved, "hex"), token(passcode)));
 }
 
+/** Whether a request from the Mocha Express app carries the staff passcode. */
+export function isStaffRequest(request: Request) {
+  const passcode = process.env.STAFF_PASSCODE;
+  const attempt = request.headers.get("authorization")?.replace(/^Bearer /, "");
+  return Boolean(passcode && attempt && matches(token(attempt), token(passcode)));
+}
+
 /** Signs the visitor in when the passcode is right; returns whether it was. */
 export async function signIn(attempt: string) {
   const passcode = process.env.STAFF_PASSCODE;

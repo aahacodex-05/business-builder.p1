@@ -56,3 +56,33 @@ export const getOrder = (id: string) => request<Order>(`/api/app/orders/${encode
 
 export const formatPrice = (cents: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100);
+
+export type StaffOrder = {
+  id: string;
+  paymentIntentId: string;
+  placedAt: string;
+  name: string;
+  phone?: string;
+  total: number;
+  items: { name: string; quantity: number }[];
+  pickedUp: boolean;
+};
+
+const staffHeaders = (passcode: string) => ({ Authorization: `Bearer ${passcode}` });
+
+export const checkPasscode = (passcode: string) => request("/api/app/staff", { headers: staffHeaders(passcode) });
+
+export const getShopOrders = (passcode: string, shop: string) =>
+  request<{ orders: StaffOrder[] }>(`/api/app/staff/${shop}`, { headers: staffHeaders(passcode) }).then(
+    ({ orders }) => orders,
+  );
+
+export const markPickedUp = (passcode: string, shop: string, paymentIntentId: string) =>
+  request(`/api/app/staff/${shop}`, {
+    method: "POST",
+    headers: { ...staffHeaders(passcode), "Content-Type": "application/json" },
+    body: JSON.stringify({ paymentIntentId }),
+  });
+
+export const formatTime = (iso: string) =>
+  new Date(iso).toLocaleTimeString("en-US", { timeZone: "America/Los_Angeles", hour: "numeric", minute: "2-digit" });
