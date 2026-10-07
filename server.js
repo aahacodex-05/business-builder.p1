@@ -23,7 +23,7 @@ const publicUser = (u) => u && {
 };
 
 const validTimezone = (tz) => {
-  try { return Intl.DateTimeFormat(undefined, { timeZone: tz }) && tz; } catch { return 'UTC'; }
+  try { Intl.DateTimeFormat(undefined, { timeZone: tz }); return tz || 'UTC'; } catch { return 'UTC'; }
 };
 
 app.get('/api/plans', (req, res) => {

@@ -193,11 +193,14 @@ $('#chat-form').onsubmit = async (e) => {
   input.value = '';
   addMessage('user', text);
   button.disabled = true;
+  const sender = me.email;
   try {
-    addMessage('assistant', (await api('/chat', { method: 'POST', body: { message: text } })).reply);
+    const { reply } = await api('/chat', { method: 'POST', body: { message: text } });
+    if (me?.email !== sender) return; // logged out while waiting
+    addMessage('assistant', reply);
     renderDeadlines();
   } catch (err) {
-    addMessage('assistant', err.message);
+    if (me?.email === sender) addMessage('assistant', err.message);
   } finally {
     button.disabled = false;
     input.focus();

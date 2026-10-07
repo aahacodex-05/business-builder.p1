@@ -14,6 +14,9 @@ function requireStripe() {
 export async function createCheckout(user, planKey) {
   const plan = PLANS[planKey];
   if (!plan) throw userError(400, 'Unknown plan.');
+  if (user.paid && user.stripe_subscription_id && plan.mode === 'subscription') {
+    throw userError(409, 'You already have a plan. Use Manage billing to change it.');
+  }
 
   const session = await requireStripe().checkout.sessions.create({
     mode: plan.mode,
@@ -38,8 +41,10 @@ export async function createPortal(user) {
   return session.url;
 }
 
+const isActive = (subscription) => ['active', 'trialing'].includes(subscription.status);
+
 /** Express handler. Needs the raw request body for signature checks. */
-export function webhook(req, res) {
+export async function webhook(req, res) {
   let event;
   try {
     event = requireStripe().webhooks.constructEvent(
@@ -50,19 +55,20 @@ export function webhook(req, res) {
 
   const obj = event.data.object;
   switch (event.type) {
-    case 'checkout.session.completed':
+    case 'checkout.session.completed': {
+      // Webhooks can arrive out of order, so read the subscription's current status.
+      const paid = obj.subscription ? isActive(await stripe.subscriptions.retrieve(obj.subscription)) : true;
       db.prepare(`
-        UPDATE users SET paid = 1, plan = ?, stripe_customer_id = ?,
+        UPDATE users SET paid = ?, plan = ?, stripe_customer_id = ?,
           stripe_subscription_id = COALESCE(?, stripe_subscription_id)
         WHERE id = ?`)
-        .run(obj.metadata.plan, obj.customer, obj.subscription, Number(obj.client_reference_id));
-      break;
-    case 'customer.subscription.updated':
-    case 'customer.subscription.deleted': {
-      const active = ['active', 'trialing'].includes(obj.status);
-      db.prepare('UPDATE users SET paid = ? WHERE stripe_subscription_id = ?').run(active ? 1 : 0, obj.id);
+        .run(paid ? 1 : 0, obj.metadata.plan, obj.customer, obj.subscription, Number(obj.client_reference_id));
       break;
     }
+    case 'customer.subscription.updated':
+    case 'customer.subscription.deleted':
+      db.prepare('UPDATE users SET paid = ? WHERE stripe_subscription_id = ?').run(isActive(obj) ? 1 : 0, obj.id);
+      break;
   }
   res.json({ received: true });
 }

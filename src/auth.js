@@ -22,7 +22,7 @@ export function startSession(res, userId) {
   res.cookie(COOKIE, token, {
     httpOnly: true,
     sameSite: 'lax',
-    secure: process.env.NODE_ENV === 'production',
+    secure: (process.env.APP_URL || '').startsWith('https://'),
     expires,
   });
 }

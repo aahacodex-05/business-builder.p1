@@ -18,6 +18,7 @@ Without `SMTP_URL`, alert emails are printed to the console.
 ## Setup
 
 - **Stripe:** create a Price for each plan in `src/plans.js` and put the IDs in `.env`. Add a webhook to `APP_URL/api/stripe/webhook` for `checkout.session.completed`, `customer.subscription.updated` and `customer.subscription.deleted`. Turn on the customer portal for "Manage billing".
+- **HTTPS:** set `APP_URL` to your https address so login cookies are secure.
 - **Claude:** set `ANTHROPIC_API_KEY`.
 - **Email:** set `SMTP_URL` and `MAIL_FROM`.
 

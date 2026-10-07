@@ -58,7 +58,13 @@ export async function sendDueAlerts(now = new Date()) {
 }
 
 export function startAlertScheduler() {
-  const tick = () => sendDueAlerts().catch((err) => console.error('[alerts]', err));
+  let running = false;
+  const tick = async () => {
+    if (running) return; // a slow mail server must not cause a second send
+    running = true;
+    await sendDueAlerts().catch((err) => console.error('[alerts]', err));
+    running = false;
+  };
   tick();
   return setInterval(tick, 60_000);
 }
