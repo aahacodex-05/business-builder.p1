@@ -193,3 +193,6 @@ export const categoryLabel = (id: string) => CATEGORIES.find((category) => categ
 
 export const formatPrice = (cents: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100);
+
+/** The most of one item a single online order can hold. */
+export const MAX_QUANTITY = 20;

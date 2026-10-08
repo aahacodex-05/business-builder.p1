@@ -96,7 +96,7 @@ function OrderCard({ order }: { order: Order }) {
         </div>
       )}
       <p className="order__meta">
-        {formatPrice(order.total)} paid{order.phone && <> · {order.phone}</>}
+        {formatPrice(order.total)} paid{order.phone && <> · {formatPhone(order.phone)}</>}
       </p>
       {!order.pickedUp && (
         <form action={markPickedUp.bind(null, order.id)}>
@@ -105,4 +105,10 @@ function OrderCard({ order }: { order: Order }) {
       )}
     </li>
   );
+}
+
+/** "+15035550123" → "(503) 555-0123". Numbers that aren't US ones show as given. */
+function formatPhone(phone: string) {
+  const digits = phone.replace(/\D/g, "").replace(/^1(?=\d{10}$)/, "");
+  return digits.length === 10 ? `(${digits.slice(0, 3)}) ${digits.slice(3, 6)}-${digits.slice(6)}` : phone;
 }

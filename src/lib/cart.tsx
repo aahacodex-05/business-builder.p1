@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { findItem } from "@/data/menu";
+import { MAX_QUANTITY, findItem } from "@/data/menu";
 
 const STORAGE_KEY = "mocha-express-cart";
 
@@ -45,7 +45,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
 
   const setQuantity = useCallback(
     (id: string, quantity: number) =>
-      setLines(({ [id]: _, ...rest }) => (quantity > 0 ? { ...rest, [id]: quantity } : rest)),
+      setLines(({ [id]: _, ...rest }) => (quantity > 0 ? { ...rest, [id]: Math.min(quantity, MAX_QUANTITY) } : rest)),
     [],
   );
   const clear = useCallback(() => {
