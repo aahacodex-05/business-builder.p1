@@ -10,8 +10,7 @@ const EMPTY_ADDRESS = { street: "", unit: "", city: "", zip: "", phone: "", note
 
 /** `canDeliver` is whether the site has a delivery courier set up. */
 export function CartDrawer({ canDeliver }: { canDeliver: boolean }) {
-  const { lines, subtotal, isOpen, setOpen, setQuantity, locationId, setLocationId } = useCart();
-  const [delivering, setDelivering] = useState(false);
+  const { lines, subtotal, isOpen, setOpen, setQuantity, locationId, setLocationId, delivering, setDelivering } = useCart();
   const [address, setAddress] = useState(EMPTY_ADDRESS);
   const [name, setName] = useState("");
   const [error, setError] = useState("");

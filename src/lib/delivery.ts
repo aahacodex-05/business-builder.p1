@@ -25,12 +25,26 @@ export function parseDropoff(form: DeliveryForm, name: string): Dropoff | string
   return dropoff;
 }
 
+/**
+ * Stripe metadata values hold at most 500 characters, so the address and the
+ * driver note go in separate keys and the name comes from `pickupName`.
+ */
+export function dropoffMetadata({ name: _, notes, ...address }: Dropoff) {
+  return { delivery: JSON.stringify(address), deliveryNotes: notes };
+}
+
+export function readDropoff(metadata: Stripe.Metadata | null): Dropoff | undefined {
+  if (!metadata?.delivery) return undefined;
+  return { ...JSON.parse(metadata.delivery), name: metadata.pickupName, notes: metadata.deliveryNotes ?? "" };
+}
+
 /** Books the driver for a paid delivery order. Does nothing for pickup orders or ones already booked. */
 export async function dispatchDelivery(sessionId: string) {
   const session = await stripe().checkout.sessions.retrieve(sessionId, { expand: ["payment_intent"] });
   const intent = session.payment_intent as Stripe.PaymentIntent | null;
   const { metadata } = session;
-  if (session.payment_status !== "paid" || !intent || !metadata?.delivery || intent.metadata.deliveryId) return;
+  const dropoff = readDropoff(metadata);
+  if (session.payment_status !== "paid" || !intent || !metadata || !dropoff || intent.metadata.deliveryId) return;
 
   const shop = findLocation(metadata.locationId);
   const service = courier();
@@ -40,7 +54,7 @@ export async function dispatchDelivery(sessionId: string) {
   const booked = await service.dispatch({
     ref: metadata.deliveryRef,
     shop,
-    dropoff: JSON.parse(metadata.delivery),
+    dropoff,
     orderValue: Number(metadata.orderValue),
     items: lines.data
       .filter(({ description }) => description !== DELIVERY_LINE)

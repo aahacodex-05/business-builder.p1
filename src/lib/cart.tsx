@@ -17,6 +17,9 @@ type Cart = {
   /** The shop chosen for pickup; "" until one is. */
   locationId: string;
   setLocationId: (id: string) => void;
+  /** Delivery instead of pickup. */
+  delivering: boolean;
+  setDelivering: (delivering: boolean) => void;
   add: (id: string) => void;
   setQuantity: (id: string, quantity: number) => void;
   clear: () => void;
@@ -28,6 +31,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
   const [lines, setLines] = useState<Lines>({});
   const [isOpen, setOpen] = useState(false);
   const [locationId, setLocationId] = useState("");
+  const [delivering, setDelivering] = useState(false);
 
   useEffect(() => {
     try {
@@ -67,6 +71,8 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setOpen,
       locationId,
       setLocationId,
+      delivering,
+      setDelivering,
       add: (id) => {
         setQuantity(id, (lines[id] ?? 0) + 1);
         setOpen(true);
@@ -74,7 +80,7 @@ export function CartProvider({ children }: { children: ReactNode }) {
       setQuantity,
       clear,
     };
-  }, [lines, isOpen, locationId, setQuantity, clear]);
+  }, [lines, isOpen, locationId, delivering, setQuantity, clear]);
 
   return <CartContext value={value}>{children}</CartContext>;
 }

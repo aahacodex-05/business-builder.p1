@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 import { MAX_QUANTITY, findItem } from "@/data/menu";
 import { findLocation } from "@/data/locations";
 import { CourierError, courier } from "@/lib/couriers";
-import { DELIVERY_LINE, parseDropoff, type DeliveryForm } from "@/lib/delivery";
+import { DELIVERY_LINE, dropoffMetadata, parseDropoff, type DeliveryForm } from "@/lib/delivery";
 import { isOpen } from "@/lib/hours";
 import { stripe } from "@/lib/stripe";
 
@@ -54,7 +54,7 @@ export async function POST(request: Request) {
       console.error("Delivery quote failed", err);
       return error("Delivery isn't available right now. Choose pickup.", 502);
     }
-    Object.assign(metadata, { deliveryRef, delivery: JSON.stringify(dropoff), orderValue: String(orderValue) });
+    Object.assign(metadata, { deliveryRef, orderValue: String(orderValue) }, dropoffMetadata(dropoff));
   }
 
   try {

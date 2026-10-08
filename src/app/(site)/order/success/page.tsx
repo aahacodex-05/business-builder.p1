@@ -2,6 +2,7 @@ import Link from "next/link";
 import { ClearCart } from "@/components/ClearCart";
 import { formatPrice } from "@/data/menu";
 import { formatAddress } from "@/lib/couriers";
+import { readDropoff } from "@/lib/delivery";
 import { stripe } from "@/lib/stripe";
 
 export const metadata = { title: "Order placed | Mocha Express Coffee" };
@@ -16,7 +17,7 @@ export default async function OrderSuccess({
     ? await stripe().checkout.sessions.retrieve(session_id).catch(() => null)
     : null;
   const paid = session?.payment_status === "paid";
-  const dropoff = session?.metadata?.delivery && JSON.parse(session.metadata.delivery);
+  const dropoff = readDropoff(session?.metadata ?? null);
 
   return (
     <main className="confirm">

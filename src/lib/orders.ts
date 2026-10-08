@@ -1,7 +1,7 @@
 import type Stripe from "stripe";
 import { findLocation } from "@/data/locations";
 import { formatAddress, type Dropoff } from "@/lib/couriers";
-import { DELIVERY_LINE } from "@/lib/delivery";
+import { DELIVERY_LINE, readDropoff } from "@/lib/delivery";
 import { StaffError } from "@/lib/errors";
 import { startOfDay } from "@/lib/hours";
 import { stripe } from "@/lib/stripe";
@@ -43,7 +43,7 @@ export async function todaysOrders(locationId: string) {
         .filter(({ description }) => description !== DELIVERY_LINE)
         .map(({ description, quantity }) => ({ name: description ?? "Item", quantity: quantity ?? 1 })),
       pickedUp: intent.metadata.pickedUp === "yes",
-      delivery: session.metadata.delivery ? delivery(JSON.parse(session.metadata.delivery), intent) : undefined,
+      delivery: delivery(readDropoff(session.metadata), intent),
     });
   }
 
@@ -51,12 +51,13 @@ export async function todaysOrders(locationId: string) {
   return orders.reverse();
 }
 
-const delivery = (dropoff: Dropoff, { metadata }: Stripe.PaymentIntent) => ({
-  address: formatAddress(dropoff),
-  notes: dropoff.notes,
-  booked: Boolean(metadata.deliveryId),
-  trackingUrl: metadata.trackingUrl || undefined,
-});
+const delivery = (dropoff: Dropoff | undefined, { metadata }: Stripe.PaymentIntent) =>
+  dropoff && {
+    address: formatAddress(dropoff),
+    notes: dropoff.notes,
+    booked: Boolean(metadata.deliveryId),
+    trackingUrl: metadata.trackingUrl || undefined,
+  };
 
 /** An expanded session carries only its first ten lines, so longer orders are fetched in full. */
 async function lineItems(session: Stripe.Checkout.Session) {
