@@ -9,6 +9,10 @@
 <meta property="og:description" content="We become your digital department. Websites, local SEO, social media and ads for small businesses.">
 <meta property="og:type" content="website">
 <meta property="og:url" content="https://thebusinessbuilder.tech">
+<meta property="og:image" content="https://thebusinessbuilder.tech/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%2315202E'/><rect x='22' y='58' width='56' height='16' fill='%23FFC72C'/><rect x='30' y='40' width='40' height='14' fill='%23FFC72C'/><rect x='38' y='24' width='24' height='12' fill='%23FFC72C'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,7 +53,9 @@ a{color:inherit}
 .nav a{text-decoration:none;font-weight:500;font-size:.95rem;opacity:.85}
 .nav a:hover{opacity:1}
 .nav .btn{opacity:1}
-@media (max-width:760px){.nav a:not(.btn){display:none}}
+.nav .call{opacity:1;font-weight:700;white-space:nowrap}
+@media (max-width:760px){.nav a:not(.btn):not(.call){display:none}}
+@media (max-width:520px){.nav .call [data-phone-num]{display:none}}
 
 .btn{display:inline-block;font:700 1rem/1 var(--body);text-decoration:none;padding:.9rem 1.3rem;border:2px solid var(--ink);background:var(--hivis);color:var(--ink);cursor:pointer;border-radius:3px;transition:transform .12s ease}
 .btn:hover{transform:translateY(-1px)}
@@ -156,7 +162,19 @@ h2.big{font-family:var(--display);font-weight:900;font-stretch:78%;font-size:cla
 footer{background:var(--ink);color:#AEB7C4;padding:2.5rem 0;font-size:.92rem}
 footer .wrap{display:flex;justify-content:space-between;gap:1.5rem;flex-wrap:wrap;align-items:center}
 footer .logo{color:#fff}
+footer .foot-contact{display:flex;gap:1.2rem;flex-wrap:wrap}
 footer .foot-contact a{color:#fff;text-decoration:none;border-bottom:2px solid var(--hivis)}
+footer .legal a{color:inherit}
+
+/* Reviews */
+.reviews{background:var(--paper)}
+.quotes{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:1.2rem}
+.quote{margin:0;border-top:3px solid var(--ink);padding-top:1.2rem}
+.quote blockquote{margin:0 0 1rem;font-size:1.1rem}
+.quote figcaption{display:grid;font-size:.95rem}
+.quote figcaption span{color:var(--muted)}
+.call-line{margin:0;color:var(--muted)}
+.call-line a{color:var(--ink);font-weight:700}
 
 .top .btn,.back{white-space:nowrap}
 @media (max-width:420px){.logo{font-size:1.05rem;gap:.45rem;line-height:1.05}.logo svg{width:24px;height:24px}.top .btn{padding:.55rem .75rem;font-size:.82rem}}
@@ -174,6 +192,7 @@ footer .foot-contact a{color:#fff;text-decoration:none;border-bottom:2px solid v
       <a href="#who">Who we help</a>
       <a href="#packages">Packages</a>
       <a href="#how">How it works</a>
+      <a class="call" href="#" data-phone hidden aria-label="Call us">Call <span data-phone-num></span></a>
       <a class="btn" href="assessment.html">Free assessment</a>
     </nav>
   </div>
@@ -317,6 +336,15 @@ footer .foot-contact a{color:#fff;text-decoration:none;border-bottom:2px solid v
     </div>
   </section>
 
+  <section class="reviews" id="reviews" hidden>
+    <div class="wrap">
+      <div class="sec-head">
+        <h2 class="big">What our clients say</h2>
+      </div>
+      <div class="quotes"></div>
+    </div>
+  </section>
+
   <div class="promise">
     <div class="wrap">
       <p>We handle the digital side of your business so you can focus on running it.</p>
@@ -328,6 +356,7 @@ footer .foot-contact a{color:#fff;text-decoration:none;border-bottom:2px solid v
       <h2 class="big">Get your free Digital Presence Assessment.</h2>
       <p>See exactly where your business is losing customers online. No cost, no obligation.</p>
       <a class="btn big-btn" href="assessment.html">Get my free assessment</a>
+      <p class="call-line" data-phone hidden>Rather talk? Call <a href="#"><span data-phone-num></span></a></p>
     </div>
   </section>
 </main>
@@ -335,15 +364,13 @@ footer .foot-contact a{color:#fff;text-decoration:none;border-bottom:2px solid v
 <footer>
   <div class="wrap">
     <a class="logo" href="#top">THE BUSINESS BUILDER</a>
-    <span class="foot-contact"><a href="mailto:andrew@thebusinessbuilder.tech">andrew@thebusinessbuilder.tech</a></span>
-    <span>Build It. Brand It. Grow It. &copy; <span id="yr"></span> The Business Builder</span>
+    <span class="foot-contact"><a href="mailto:andrew@thebusinessbuilder.tech" data-email>andrew@thebusinessbuilder.tech</a><a href="#" data-phone hidden><span data-phone-num></span></a></span>
+    <span class="legal">Build It. Brand It. Grow It. &copy; <span data-yr></span> The Business Builder · <a href="privacy.html">Privacy</a></span>
   </div>
 </footer>
 
+<script src="site.js"></script>
 <script>
-
-document.getElementById("yr").textContent = new Date().getFullYear();
-
 // Scorecard
 const items = ["Website","Google Business Profile","Facebook","Instagram","Local search visibility","Online reviews","Mobile-friendly website"];
 const state = items.map(() => null);
