@@ -47,15 +47,15 @@ a{color:inherit}
 /* Header */
 .top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:var(--ink);color:#fff;border-bottom:4px solid var(--hivis)}
 .top .wrap{display:flex;align-items:center;justify-content:space-between;gap:1rem;height:64px}
-.logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;font-family:var(--display);font-weight:800;font-stretch:80%;font-size:1.3rem;letter-spacing:.01em}
+.logo{display:flex;align-items:center;gap:.6rem;text-decoration:none;font-family:var(--display);font-weight:800;font-stretch:80%;font-size:1.3rem;letter-spacing:.01em;line-height:1.05}
 .logo svg{width:30px;height:30px;flex:none}
 .nav{display:flex;gap:1.6rem;align-items:center}
 .nav a{text-decoration:none;font-weight:500;font-size:.95rem;opacity:.85}
 .nav a:hover{opacity:1}
 .nav .btn{opacity:1}
 .nav .call{opacity:1;font-weight:700;white-space:nowrap}
-@media (max-width:760px){.nav a:not(.btn):not(.call){display:none}}
-@media (max-width:520px){.nav .call [data-phone-num]{display:none}}
+@media (max-width:1000px){.nav a:not(.btn):not(.call){display:none}}
+@media (max-width:680px){.nav{gap:1rem}.nav .call [data-phone-num]{display:none}}
 
 .btn{display:inline-block;font:700 1rem/1 var(--body);text-decoration:none;padding:.9rem 1.3rem;border:2px solid var(--ink);background:var(--hivis);color:var(--ink);cursor:pointer;border-radius:3px;transition:transform .12s ease}
 .btn:hover{transform:translateY(-1px)}
@@ -136,6 +136,7 @@ h2.big{font-family:var(--display);font-weight:900;font-stretch:78%;font-size:cla
 .addon h4{margin:0;font-family:var(--display);font-stretch:90%;font-weight:800;font-size:1.25rem}
 .addon .amt{font-family:var(--display);font-weight:800;font-size:1.25rem;text-align:right;white-space:nowrap}
 .addon p{margin:0;color:var(--muted);font-size:.97rem;grid-column:1/-1;max-width:70ch}
+@media (max-width:480px){.addon{grid-template-columns:1fr}.addon .amt{text-align:left}}
 .fine{font-size:.9rem;color:var(--muted);margin-top:1.2rem}
 
 /* Process */
@@ -271,7 +272,7 @@ footer .legal a{color:inherit}
           <p class="kind">Most complete</p>
           <h3>BUILD + GROW</h3>
           <p class="full">Business Builder Complete</p>
-          <p class="price">$1,299 <small>setup</small> + $499<small>/mo</small></p>
+          <p class="price">$999 <small>setup</small> + $399<small>/mo</small></p>
           <ul>
             <li>Everything in BUILD</li>
             <li>Everything in GROW</li>

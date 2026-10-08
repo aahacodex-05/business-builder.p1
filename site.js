@@ -2,7 +2,7 @@
 const SITE = {
   email: "andrew@thebusinessbuilder.tech",
   // Business phone, e.g. "(503) 555-0123". Phone links stay hidden until this is set.
-  phone: "",
+  phone: "(503) 200-9202",
   // Form endpoint URL (e.g. from Formspree) so assessment requests arrive in your inbox.
   // Leave empty to fall back to opening the visitor's email app.
   formEndpoint: "",
