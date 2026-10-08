@@ -1,8 +1,6 @@
 /* ===== SITE SETTINGS: change these ===== */
 const SITE = {
   email: "andrew@thebusinessbuilder.tech",
-  // Business phone, e.g. "(503) 555-0123". Phone links stay hidden until this is set.
-  phone: "(503) 200-9202",
   // Form endpoint URL (e.g. from Formspree) so assessment requests arrive in your inbox.
   // Leave empty to fall back to opening the visitor's email app.
   formEndpoint: "",
@@ -17,13 +15,6 @@ document.querySelectorAll("[data-yr]").forEach(el => el.textContent = new Date()
 document.querySelectorAll("[data-email]").forEach(a => {
   a.href = "mailto:" + SITE.email;
   if (!a.children.length) a.textContent = SITE.email;
-});
-
-if (SITE.phone) document.querySelectorAll("[data-phone]").forEach(el => {
-  const a = el.matches("a") ? el : el.querySelector("a");
-  a.href = "tel:" + SITE.phone.replace(/[^\d+]/g, "");
-  a.querySelector("[data-phone-num]")?.replaceChildren(SITE.phone);
-  el.hidden = false;
 });
 
 const reviews = document.getElementById("reviews");
