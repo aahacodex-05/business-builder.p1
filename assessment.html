@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Free Digital Presence Assessment | The Business Builder</title>
 <meta name="description" content="Request your free Digital Presence Assessment from The Business Builder.">
+<meta property="og:title" content="Free Digital Presence Assessment">
+<meta property="og:description" content="Find out where your business is losing customers online. Free, no obligation.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://thebusinessbuilder.tech/assessment.html">
+<meta property="og:image" content="https://thebusinessbuilder.tech/og.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='18' fill='%2315202E'/><rect x='22' y='58' width='56' height='16' fill='%23FFC72C'/><rect x='30' y='40' width='40' height='14' fill='%23FFC72C'/><rect x='38' y='24' width='24' height='12' fill='%23FFC72C'/></svg>">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -20,6 +28,7 @@
   padding-bottom:env(safe-area-inset-bottom,0px);
 }
 *,*::before,*::after{box-sizing:inherit}
+[hidden]{display:none!important}
 html{scroll-padding-top:calc(env(safe-area-inset-top,0px) + 80px)}
 body{margin:0;background:var(--concrete);color:var(--ink);font-family:var(--body);font-size:1.0625rem;line-height:1.6;-webkit-font-smoothing:antialiased}
 a{color:inherit}
@@ -88,11 +97,16 @@ textarea{min-height:110px;resize:vertical}
 .done{display:none;text-align:center;padding:2rem 0}
 .done h2{font-family:var(--display);font-weight:900;font-stretch:78%;font-size:clamp(2rem,5vw,3rem);line-height:1;margin:0 0 1rem}
 .done p{color:var(--muted);max-width:46ch;margin:0 auto 1.5rem}
+.fallback{display:grid;gap:.8rem;justify-items:center;margin-bottom:2rem}
+.fallback p{margin:0 auto}
+.fallback textarea{min-height:160px;font-size:.9rem}
+.btn.ghost{background:#fff;box-shadow:none}
 form.sent>*:not(.done){display:none}
 form.sent .done{display:block}
 
 footer{background:var(--ink);color:#AEB7C4;padding:2rem 0;font-size:.92rem;text-align:center}
 .foot-contact{margin:0 0 .5rem}
+footer a{color:inherit}
 .foot-contact a{color:#fff;text-decoration:none;border-bottom:2px solid var(--hivis)}
 @media (prefers-reduced-motion:reduce){*{transition:none!important}}
 
@@ -197,8 +211,8 @@ footer{background:var(--ink);color:#AEB7C4;padding:2rem 0;font-size:.92rem;text-
       </div>
       <div class="row">
         <label>When do you want to get started?<select name="Timeline"><option>As soon as possible</option><option>Within a month</option><option>1–3 months</option><option>Just exploring</option></select></label>
-        <label>Anything else we should know? <span class="opt">(optional)</span><input name="Notes"></label>
       </div>
+      <label>Anything else we should know? <span class="opt">(optional)</span><textarea name="Notes"></textarea></label>
     </fieldset>
 
     <input class="hp" name="company_url" tabindex="-1" autocomplete="off" aria-hidden="true">
@@ -206,28 +220,26 @@ footer{background:var(--ink);color:#AEB7C4;padding:2rem 0;font-size:.92rem;text-
     <div class="submit">
       <button class="btn" type="submit" id="submitBtn">Send my assessment request</button>
       <p class="status" id="status" role="status"></p>
-      <p class="small">It's free, with no obligation. We'll only use your information to prepare your assessment.</p>
+      <p class="small">It's free, with no obligation. We'll only use your information to prepare your assessment. See our <a href="privacy.html">privacy policy</a>.</p>
     </div>
 
     <div class="done" tabindex="-1" id="done">
-      <h2>Request received.</h2>
-      <p>We'll review your business online and reach out within one business day with your scorecard.</p>
+      <h2 id="doneTitle">Request received.</h2>
+      <p id="doneMsg">We'll review your business online and reach out within one business day with your scorecard.</p>
+      <div class="fallback" id="fallback" hidden>
+        <p>If your email app didn't open, copy your answers and email them to <a href="mailto:andrew@thebusinessbuilder.tech" data-email>andrew@thebusinessbuilder.tech</a>.</p>
+        <textarea id="answers" readonly aria-label="Your answers"></textarea>
+        <button class="btn ghost" type="button" id="copyBtn">Copy my answers</button>
+      </div>
       <a class="btn" href="index.html">Back to home</a>
     </div>
   </form>
 </main>
 
-<footer><p class="foot-contact"><a href="mailto:andrew@thebusinessbuilder.tech">andrew@thebusinessbuilder.tech</a></p>Build It. Brand It. Grow It. &copy; <span id="yr"></span> The Business Builder</footer>
+<footer><p class="foot-contact"><a href="mailto:andrew@thebusinessbuilder.tech" data-email>andrew@thebusinessbuilder.tech</a></p>Build It. Brand It. Grow It. &copy; <span data-yr></span> The Business Builder · <a href="privacy.html">Privacy</a></footer>
 
+<script src="site.js"></script>
 <script>
-/* ===== SETTINGS: change these ===== */
-const CONTACT_EMAIL = "andrew@thebusinessbuilder.tech";
-/* Paste a form endpoint URL here (e.g. from Formspree) so requests arrive in your inbox automatically.
-   Leave empty to open the visitor's email app with everything filled in instead. */
-const FORM_ENDPOINT = "";
-/* ================================== */
-
-document.getElementById("yr").textContent = new Date().getFullYear();
 
 // Presence checklist (matches the scorecard on the home page)
 const presence = [
@@ -258,6 +270,8 @@ presence.forEach((p, i) => {
 const btype = document.getElementById("btype");
 btype.addEventListener("change", () => document.getElementById("otherWrap").hidden = btype.value !== "Other");
 
+const form = document.getElementById("assessForm");
+
 // Prefill from the home page (package button or scorecard)
 const params = new URLSearchParams(location.search);
 if (params.get("package")) document.getElementById("pkg").value = params.get("package");
@@ -273,10 +287,9 @@ if (params.get("goals")) params.get("goals").split("|").forEach(g => {
   const c = document.querySelector(`input[name="Goals"][value="${CSS.escape(g)}"]`);
   if (c) c.checked = true;
 });
-if (params.get("quiz")) document.querySelector('input[name="Notes"]').value = "Quiz answers: " + params.get("quiz");
+if (params.get("quiz")) form.Notes.value = "Quiz answers: " + params.get("quiz");
 
 // Submit
-const form = document.getElementById("assessForm");
 const status = document.getElementById("status");
 form.addEventListener("submit", async e => {
   e.preventDefault();
@@ -304,25 +317,39 @@ form.addEventListener("submit", async e => {
   }
 
   const btn = document.getElementById("submitBtn");
-  if (FORM_ENDPOINT) {
+  if (SITE.formEndpoint) {
     btn.disabled = true; status.className = "status"; status.textContent = "Sending...";
     try {
-      const r = await fetch(FORM_ENDPOINT, {method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"}, body:JSON.stringify(data)});
+      const r = await fetch(SITE.formEndpoint, {method:"POST", headers:{"Content-Type":"application/json","Accept":"application/json"}, body:JSON.stringify(data)});
       if (!r.ok) throw new Error();
       form.classList.add("sent");
       document.getElementById("done").focus();
       window.scrollTo(0, 0);
     } catch {
       status.className = "status err";
-      status.textContent = `That didn't go through. Email us at ${CONTACT_EMAIL} or try again.`;
+      status.textContent = `That didn't go through. Email us at ${SITE.email} or try again.`;
     } finally { btn.disabled = false; }
     return;
   }
 
   const body = Object.entries(data).map(([k, v]) => `${k}: ${v}`).join("\n");
-  window.location.href = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent("Assessment request: " + data["Business name"])}&body=${encodeURIComponent(body)}`;
+  const subject = "Assessment request: " + data["Business name"];
+  document.getElementById("doneTitle").textContent = "One more step.";
+  document.getElementById("doneMsg").textContent = "Your email app should open with your answers filled in. Press send and we'll reply within one business day.";
+  document.getElementById("answers").value = `${subject}\n\n${body}`;
+  document.getElementById("fallback").hidden = false;
   form.classList.add("sent");
-  document.querySelector("#done p").textContent = "Your email app should now be open with your answers filled in. Press send and we'll reply within one business day.";
+  window.scrollTo(0, 0);
+  // Last, so a browser that blocks mailto links still shows the copyable answers
+  window.location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+});
+
+const copyBtn = document.getElementById("copyBtn");
+copyBtn.addEventListener("click", async () => {
+  const answers = document.getElementById("answers");
+  try { await navigator.clipboard.writeText(answers.value); }
+  catch { answers.select(); document.execCommand("copy"); }
+  copyBtn.textContent = "Copied";
 });
 </script>
 </body>
