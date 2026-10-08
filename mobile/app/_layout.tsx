@@ -63,7 +63,10 @@ function App() {
           <Stack.Screen name="item/[id]" options={{ title: "", presentation: "modal" }} />
           <Stack.Screen name="order" options={{ headerShown: false, gestureEnabled: false }} />
           <Stack.Screen name="staff/index" options={{ title: "Staff" }} />
-          <Stack.Screen name="staff/[shop]" options={{ title: "Orders" }} />
+          <Stack.Screen name="staff/signup" options={{ title: "Sign up" }} />
+          <Stack.Screen name="staff/owner" options={{ title: "Owner" }} />
+          <Stack.Screen name="staff/orders" options={{ title: "Orders" }} />
+          <Stack.Screen name="staff/team" options={{ title: "Team" }} />
         </Stack>
       </StaffProvider>
     </CartProvider>

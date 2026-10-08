@@ -36,12 +36,30 @@ export type Order = { paid: boolean; name?: string; location?: string; total: nu
 
 export type OrderRequest = { lines: Record<string, number>; locationId: string; name: string };
 
+/** An error from the site, with a message that's fine to show. */
+export class ApiError extends Error {
+  constructor(
+    message: string,
+    readonly status: number,
+  ) {
+    super(message);
+  }
+}
+
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   const response = await fetch(`${SITE_URL}${path}`, init);
   const body = await response.json().catch(() => ({}));
-  if (!response.ok) throw new Error(body.error ?? "Something went wrong. Please try again.");
+  if (!response.ok) throw new ApiError(body.error ?? "Something went wrong. Please try again.", response.status);
   return body;
 }
+
+const json = (body: unknown, token?: string): RequestInit => ({
+  method: "POST",
+  headers: { "Content-Type": "application/json", ...auth(token) },
+  body: JSON.stringify(body),
+});
+
+const auth = (token?: string): Record<string, string> => (token ? { Authorization: `Bearer ${token}` } : {});
 
 export const getCatalog = () => request<Catalog>("/api/app/catalog");
 
@@ -57,9 +75,12 @@ export const getOrder = (id: string) => request<Order>(`/api/app/orders/${encode
 export const formatPrice = (cents: number) =>
   new Intl.NumberFormat("en-US", { style: "currency", currency: "USD" }).format(cents / 100);
 
+export type Staff = { role: "employee"; id: string; name: string; shop: string } | { role: "owner" };
+
+export type Session = { token: string; staff: Staff };
+
 export type StaffOrder = {
   id: string;
-  paymentIntentId: string;
   placedAt: string;
   name: string;
   phone?: string;
@@ -68,21 +89,55 @@ export type StaffOrder = {
   pickedUp: boolean;
 };
 
-const staffHeaders = (passcode: string) => ({ Authorization: `Bearer ${passcode}` });
+export type Employee = {
+  id: string;
+  number: string;
+  shop: string;
+  name: string | null;
+  status: "pending" | "expired" | "active";
+  expiresAt: string;
+  signedUpAt: string | null;
+};
 
-export const checkPasscode = (passcode: string) => request("/api/app/staff", { headers: staffHeaders(passcode) });
+// Staff accounts: see docs/staff-api.md on the site.
+export const signUp = (details: { number: string; name: string; password: string }) =>
+  request<Session>("/api/staff/signup", json(details));
 
-export const getShopOrders = (passcode: string, shop: string) =>
-  request<{ orders: StaffOrder[] }>(`/api/app/staff/${shop}`, { headers: staffHeaders(passcode) }).then(
-    ({ orders }) => orders,
+export const signIn = (number: string, password: string) =>
+  request<Session>("/api/staff/login", json({ number, password }));
+
+export const ownerSignIn = (code: string) => request<Session>("/api/owner/login", json({ code }));
+
+export const endSession = (token: string) => request("/api/staff/logout", { method: "POST", headers: auth(token) });
+
+export const getMe = (token: string) =>
+  request<{ staff: Staff }>("/api/staff/me", { headers: auth(token) }).then(({ staff }) => staff);
+
+/** Employees always get their own shop; the owner names one. */
+export const getStaffOrders = (token: string, shop?: string) =>
+  request<{ shop: string; orders: StaffOrder[] }>(`/api/staff/orders${shop ? `?shop=${shop}` : ""}`, {
+    headers: auth(token),
+  });
+
+export const markPickedUp = (token: string, id: string) =>
+  request(`/api/staff/orders/${encodeURIComponent(id)}/picked-up`, { method: "POST", headers: auth(token) });
+
+export const getEmployees = (token: string) =>
+  request<{ employees: Employee[] }>("/api/owner/employees", { headers: auth(token) }).then(
+    ({ employees }) => employees,
   );
 
-export const markPickedUp = (passcode: string, shop: string, paymentIntentId: string) =>
-  request(`/api/app/staff/${shop}`, {
-    method: "POST",
-    headers: { ...staffHeaders(passcode), "Content-Type": "application/json" },
-    body: JSON.stringify({ paymentIntentId }),
-  });
+export const addEmployee = (token: string, shop: string) =>
+  request<{ employee: Employee }>("/api/owner/employees", json({ shop }, token)).then(({ employee }) => employee);
+
+export const removeEmployee = (token: string, id: string) =>
+  request(`/api/owner/employees/${encodeURIComponent(id)}`, { method: "DELETE", headers: auth(token) });
+
+/** "12345678" → "1234 5678" */
+export const formatNumber = (number: string) => number.replace(/^(\d{4})(\d{4})$/, "$1 $2");
 
 export const formatTime = (iso: string) =>
   new Date(iso).toLocaleTimeString("en-US", { timeZone: "America/Los_Angeles", hour: "numeric", minute: "2-digit" });
+
+export const formatDate = (iso: string) =>
+  new Date(iso).toLocaleDateString("en-US", { timeZone: "America/Los_Angeles", month: "short", day: "numeric" });

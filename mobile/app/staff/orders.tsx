@@ -1,7 +1,7 @@
 import { router, useFocusEffect, useLocalSearchParams } from "expo-router";
-import { useCallback, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { ScrollView, StyleSheet, Text, Vibration, View } from "react-native";
-import { formatPrice, formatTime, getShopOrders, markPickedUp, type StaffOrder } from "../../src/api";
+import { formatPrice, formatTime, getStaffOrders, markPickedUp, type StaffOrder } from "../../src/api";
 import { useCatalog } from "../../src/catalog";
 import { Button } from "../../src/components/Button";
 import { Notice } from "../../src/components/Notice";
@@ -10,28 +10,29 @@ import { colors, fonts, radius } from "../../src/theme";
 
 const REFRESH_MS = 15_000;
 
-/** Today's paid pickup orders for one shop, like the site's tablet screen. */
-export default function ShopOrdersScreen() {
-  const { shop } = useLocalSearchParams<{ shop: string }>();
-  const location = useCatalog().locations.find(({ id }) => id === shop);
-  const { passcode, signOut } = useStaff();
-  const [orders, setOrders] = useState<StaffOrder[]>();
+/** Today's paid pickup orders: an employee's own shop, or the shop the owner picked. */
+export default function OrdersScreen() {
+  const { shop: requested } = useLocalSearchParams<{ shop?: string }>();
+  const { locations } = useCatalog();
+  const { session, signOut, handleError } = useStaff();
+  const [result, setResult] = useState<{ shop: string; orders: StaffOrder[] }>();
   const [error, setError] = useState<string>();
   const seen = useRef<Set<string>>(undefined);
 
+  const token = session?.token;
   const load = useCallback(async () => {
-    if (!passcode) return;
+    if (!token) return;
     try {
-      const latest = await getShopOrders(passcode, shop);
+      const latest = await getStaffOrders(token, requested);
       // Buzz when an order arrives after the screen first loaded.
-      if (seen.current && latest.some(({ id }) => !seen.current!.has(id))) Vibration.vibrate();
-      seen.current = new Set(latest.map(({ id }) => id));
-      setOrders(latest);
+      if (seen.current && latest.orders.some(({ id }) => !seen.current!.has(id))) Vibration.vibrate();
+      seen.current = new Set(latest.orders.map(({ id }) => id));
+      setResult(latest);
       setError(undefined);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      setError(handleError(err));
     }
-  }, [passcode, shop]);
+  }, [token, requested, handleError]);
 
   useFocusEffect(
     useCallback(() => {
@@ -41,33 +42,26 @@ export default function ShopOrdersScreen() {
     }, [load]),
   );
 
-  if (!passcode || !location) {
-    return (
-      <Notice
-        title="Staff only"
-        message="Sign in to see orders."
-        action={{ label: "Sign in", onPress: () => router.replace("/staff") }}
-      />
-    );
-  }
-  if (!orders) {
-    return error ? (
-      <Notice title="Can't load orders" message={error} action={{ label: "Sign out", onPress: signOut }} />
-    ) : (
-      <Notice />
-    );
-  }
+  // Signed out here, or the session ended: back to the staff sign-in.
+  useEffect(() => {
+    if (session === null) router.dismissTo("/staff");
+  }, [session]);
 
-  const waiting = orders.filter((order) => !order.pickedUp);
-  const pickedUp = orders.filter((order) => order.pickedUp).reverse();
+  if (!session) return <Notice />;
+  if (!result) return error ? <Notice title="Can't load orders" message={error} /> : <Notice />;
+
+  const location = locations.find(({ id }) => id === result.shop);
+  const waiting = result.orders.filter((order) => !order.pickedUp);
+  const pickedUp = result.orders.filter((order) => order.pickedUp).reverse();
   const pickUp = async (order: StaffOrder) => {
-    await markPickedUp(passcode, shop, order.paymentIntentId).catch((err: Error) => setError(err.message));
+    await markPickedUp(token!, order.id).catch((err) => setError(handleError(err)));
     load();
   };
 
   return (
     <ScrollView contentContainerStyle={styles.content}>
-      <Text style={styles.title}>{location.name} orders</Text>
+      <Text style={styles.title}>{location?.name} orders</Text>
+      {session?.staff.role === "employee" && <Text style={styles.signedIn}>Signed in as {session.staff.name}</Text>}
       {error && <Text style={styles.error}>{error}</Text>}
 
       {waiting.length === 0 ? (
@@ -80,6 +74,8 @@ export default function ShopOrdersScreen() {
       {pickedUp.map((order) => (
         <OrderCard key={order.id} order={order} />
       ))}
+
+      {session?.staff.role === "employee" && <Button label="Sign out" variant="quiet" onPress={signOut} />}
     </ScrollView>
   );
 }
@@ -107,6 +103,7 @@ function OrderCard({ order, onPickUp }: { order: StaffOrder; onPickUp?: () => vo
 const styles = StyleSheet.create({
   content: { padding: 16, gap: 12 },
   title: { fontFamily: fonts.display, fontSize: 30, color: colors.ink },
+  signedIn: { fontFamily: fonts.body, fontSize: 15, color: colors.muted, marginTop: -6 },
   heading: { fontFamily: fonts.display, fontSize: 22, color: colors.ink, marginTop: 12 },
   empty: { fontFamily: fonts.body, fontSize: 16, color: colors.muted },
   error: { fontFamily: fonts.bold, fontSize: 15, color: "#b3261e" },

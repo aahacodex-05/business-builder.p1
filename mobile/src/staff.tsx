@@ -1,42 +1,59 @@
-import AsyncStorage from "@react-native-async-storage/async-storage";
-import { createContext, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { checkPasscode } from "./api";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { ApiError, endSession, getMe, type Session } from "./api";
+import { deleteSecure, getSecure, setSecure } from "./secureStorage";
 
-const STORAGE_KEY = "mocha-express-staff";
+const STORAGE_KEY = "mocha-express-staff-session";
 
-type Staff = {
+type StaffState = {
   /** Undefined while loading, null when signed out. */
-  passcode?: string | null;
-  signIn: (attempt: string) => Promise<void>;
+  session?: Session | null;
+  start: (session: Session) => Promise<void>;
   signOut: () => void;
+  /** Call with any error from a staff request: a 401 means the session ended, so it signs out. */
+  handleError: (error: unknown) => string;
 };
 
-const StaffContext = createContext<Staff | null>(null);
+const StaffContext = createContext<StaffState | null>(null);
 
-/** Shop tablets stay signed in, like the site's staff cookie; a new passcode signs them out. */
 export function StaffProvider({ children }: { children: ReactNode }) {
-  const [passcode, setPasscode] = useState<string | null>();
+  const [session, setSession] = useState<Session | null>();
 
-  useEffect(() => {
-    AsyncStorage.getItem(STORAGE_KEY)
-      .then(setPasscode)
-      .catch(() => setPasscode(null));
+  const clear = useCallback(() => {
+    deleteSecure(STORAGE_KEY).catch(() => {});
+    setSession(null);
   }, []);
 
-  const value = useMemo<Staff>(
+  // Restore the saved session, then check it still works (access can be removed at any time).
+  useEffect(() => {
+    getSecure(STORAGE_KEY)
+      .then((saved) => {
+        const restored: Session | null = saved ? JSON.parse(saved) : null;
+        setSession(restored);
+        if (restored)
+          getMe(restored.token)
+            .then((staff) => setSession({ ...restored, staff }))
+            .catch((err) => err instanceof ApiError && err.status === 401 && clear());
+      })
+      .catch(() => setSession(null));
+  }, [clear]);
+
+  const value = useMemo<StaffState>(
     () => ({
-      passcode,
-      signIn: async (attempt) => {
-        await checkPasscode(attempt);
-        await AsyncStorage.setItem(STORAGE_KEY, attempt).catch(() => {});
-        setPasscode(attempt);
+      session,
+      start: async (next) => {
+        await setSecure(STORAGE_KEY, JSON.stringify(next)).catch(() => {});
+        setSession(next);
       },
       signOut: () => {
-        AsyncStorage.removeItem(STORAGE_KEY).catch(() => {});
-        setPasscode(null);
+        if (session) endSession(session.token).catch(() => {});
+        clear();
+      },
+      handleError: (error) => {
+        if (error instanceof ApiError && error.status === 401) clear();
+        return error instanceof Error ? error.message : String(error);
       },
     }),
-    [passcode],
+    [session, clear],
   );
 
   return <StaffContext value={value}>{children}</StaffContext>;

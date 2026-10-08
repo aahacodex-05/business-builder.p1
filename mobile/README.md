@@ -26,13 +26,15 @@ Checkout opens Stripe in the phone's browser. In a store build it closes itself 
 | `POST /api/checkout` with `from: "app"` | Starts Stripe Checkout; returns `url` and `id` |
 | `GET /api/app/orders/:id` | Whether a checkout was paid, for the confirmation screen |
 | `GET /order/app` | Stripe's return page; sends the customer back into the app |
-| `GET /api/app/staff` | Checks the staff passcode (sent as `Authorization: Bearer`) |
-| `GET /api/app/staff/:shop` | A shop's paid pickup orders from today |
-| `POST /api/app/staff/:shop` | Marks an order picked up |
+
+Staff sign-up, sign-in, shop orders and the owner's team page use the site's staff API, documented in [docs/staff-api.md](../docs/staff-api.md). The session token is kept in the Keychain (iPhone) or Keystore (Android).
 
 ## Staff
 
-A small "Staff" link at the bottom of the menu, like the site's footer link, opens the staff sign-in. It uses the site's `STAFF_PASSCODE`, stays signed in on the device, and shows each shop's orders, refreshing every 15 seconds and buzzing when a new one arrives.
+A small "Staff" link at the bottom of the menu, like the site's footer link, opens the staff screens:
+
+- **Employees** sign up once with the employee number the owner gave them, then sign in with that number and their password. They see only their own shop's orders, which refresh every 15 seconds and buzz on a new order.
+- **The owner** signs in with the Owner ID, sees every shop's orders, and on the Team screen makes employee numbers, cancels unused ones and removes access.
 
 ## Publishing
 
