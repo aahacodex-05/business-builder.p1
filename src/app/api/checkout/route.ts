@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { findItem } from "@/data/menu";
+import { MAX_QUANTITY, findItem } from "@/data/menu";
 import { findLocation } from "@/data/locations";
 import { isOpen } from "@/lib/hours";
 import { stripe } from "@/lib/stripe";
@@ -9,8 +9,6 @@ type CheckoutRequest = {
   locationId: string;
   name: string;
 };
-
-const MAX_QUANTITY = 20;
 
 export async function POST(request: Request) {
   const { lines, locationId, name } = (await request.json()) as CheckoutRequest;
@@ -23,11 +21,12 @@ export async function POST(request: Request) {
   // Prices always come from the server-side menu, never from the client.
   const items = Object.entries(lines ?? {}).flatMap(([id, quantity]) => {
     const item = findItem(id);
-    return item && Number.isInteger(quantity) && quantity > 0 && quantity <= MAX_QUANTITY
-      ? [{ item, quantity }]
-      : [];
+    return item && Number.isInteger(quantity) && quantity > 0 ? [{ item, quantity }] : [];
   });
   if (items.length === 0) return error("Your cart is empty.");
+  if (items.some(({ quantity }) => quantity > MAX_QUANTITY)) {
+    return error(`You can order up to ${MAX_QUANTITY} of each item online. For more, call the shop.`);
+  }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
   const metadata = { locationId: location.id, location: location.name, pickupName: name.trim().slice(0, 80) };

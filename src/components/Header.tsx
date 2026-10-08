@@ -9,7 +9,7 @@ export function Header() {
 
   return (
     <header className="nav">
-      <Link className="nav__brand" href="/">
+      <Link className="nav__brand" href="/" aria-label="Mocha Express, home">
         <img src="/logo.png" alt="" width={40} height={40} />
         <span>Mocha Express</span>
       </Link>

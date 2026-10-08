@@ -2,7 +2,7 @@
 
 import { useEffect, useState, type FormEvent } from "react";
 import { LOCATIONS } from "@/data/locations";
-import { findItem, formatPrice } from "@/data/menu";
+import { MAX_QUANTITY, findItem, formatPrice } from "@/data/menu";
 import { useCart } from "@/lib/cart";
 import { isOpen as isShopOpen } from "@/lib/hours";
 
@@ -72,7 +72,12 @@ export function CartDrawer() {
                       −
                     </button>
                     {quantity}
-                    <button type="button" onClick={() => setQuantity(item.id, quantity + 1)} aria-label={`Add one ${item.name}`}>
+                    <button
+                      type="button"
+                      onClick={() => setQuantity(item.id, quantity + 1)}
+                      aria-label={`Add one ${item.name}`}
+                      disabled={quantity >= MAX_QUANTITY}
+                    >
                       +
                     </button>
                   </span>

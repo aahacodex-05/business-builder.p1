@@ -490,6 +490,7 @@ h1, h2 { font-variation-settings: "SOFT" 100, "WONK" 1; }
   background: var(--latte);
   cursor: pointer;
 }
+.qty button:disabled { opacity: .4; cursor: not-allowed; }
 
 .form-error { color: #a12d1c; font-weight: 600; }
 .fine-print { color: var(--muted); font-size: .8rem; text-align: center; }
