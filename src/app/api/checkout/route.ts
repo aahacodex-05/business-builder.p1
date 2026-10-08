@@ -1,6 +1,9 @@
+import { randomUUID } from "node:crypto";
 import { NextResponse } from "next/server";
 import { MAX_QUANTITY, findItem } from "@/data/menu";
 import { findLocation } from "@/data/locations";
+import { CourierError, courier } from "@/lib/couriers";
+import { DELIVERY_LINE, dropoffMetadata, parseDropoff, type DeliveryForm } from "@/lib/delivery";
 import { isOpen } from "@/lib/hours";
 import { stripe } from "@/lib/stripe";
 
@@ -8,13 +11,15 @@ type CheckoutRequest = {
   lines: Record<string, number>;
   locationId: string;
   name: string;
+  /** Present for delivery orders. */
+  delivery?: DeliveryForm;
 };
 
 export async function POST(request: Request) {
-  const { lines, locationId, name } = (await request.json()) as CheckoutRequest;
+  const { lines, locationId, name, delivery } = (await request.json()) as CheckoutRequest;
 
   const location = findLocation(locationId);
-  if (!location) return error("Pick a pickup location.");
+  if (!location) return error(delivery ? "Pick a shop to deliver from." : "Pick a pickup location.");
   if (!name?.trim()) return error("Add a name for the order.");
   if (!isOpen(location.hours)) return error(`${location.name} is closed right now. Online ordering opens with the shop.`);
 
@@ -29,19 +34,33 @@ export async function POST(request: Request) {
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
-  const metadata = { locationId: location.id, location: location.name, pickupName: name.trim().slice(0, 80) };
+  const pickupName = name.trim().slice(0, 80);
+  const orderValue = items.reduce((sum, { item, quantity }) => sum + item.price * quantity, 0);
+  const metadata: Record<string, string> = { locationId: location.id, location: location.name, pickupName };
+  const lineItems = items.map(({ item, quantity }) => line(item.name, item.price, quantity));
+
+  if (delivery) {
+    const service = courier();
+    if (!service) return error("Delivery isn't available right now. Choose pickup.");
+    const dropoff = parseDropoff(delivery, pickupName);
+    if (typeof dropoff === "string") return error(dropoff);
+
+    const deliveryRef = randomUUID();
+    try {
+      const { fee } = await service.quote({ ref: deliveryRef, shop: location, dropoff, orderValue, items: [] });
+      lineItems.push(line(DELIVERY_LINE, fee, 1));
+    } catch (err) {
+      if (err instanceof CourierError) return error(err.message);
+      console.error("Delivery quote failed", err);
+      return error("Delivery isn't available right now. Choose pickup.", 502);
+    }
+    Object.assign(metadata, { deliveryRef, orderValue: String(orderValue) }, dropoffMetadata(dropoff));
+  }
 
   try {
     const session = await stripe().checkout.sessions.create({
       mode: "payment",
-      line_items: items.map(({ item, quantity }) => ({
-        quantity,
-        price_data: {
-          currency: "usd",
-          unit_amount: item.price,
-          product_data: { name: item.name },
-        },
-      })),
+      line_items: lineItems,
       metadata,
       payment_intent_data: { metadata },
       phone_number_collection: { enabled: true },
@@ -58,4 +77,9 @@ export async function POST(request: Request) {
   }
 }
 
-const error = (message: string) => NextResponse.json({ error: message }, { status: 400 });
+const error = (message: string, status = 400) => NextResponse.json({ error: message }, { status });
+
+const line = (name: string, cents: number, quantity: number) => ({
+  quantity,
+  price_data: { currency: "usd", unit_amount: cents, product_data: { name } },
+});

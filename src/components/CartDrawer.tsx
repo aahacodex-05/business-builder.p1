@@ -1,13 +1,17 @@
 "use client";
 
-import { useEffect, useState, type FormEvent } from "react";
+import { useEffect, useState, type ChangeEvent, type FormEvent } from "react";
 import { LOCATIONS } from "@/data/locations";
 import { MAX_QUANTITY, findItem, formatPrice } from "@/data/menu";
 import { useCart } from "@/lib/cart";
 import { isOpen as isShopOpen } from "@/lib/hours";
 
-export function CartDrawer() {
-  const { lines, subtotal, isOpen, setOpen, setQuantity, locationId, setLocationId } = useCart();
+const EMPTY_ADDRESS = { street: "", unit: "", city: "", zip: "", phone: "", notes: "" };
+
+/** `canDeliver` is whether the site has a delivery courier set up. */
+export function CartDrawer({ canDeliver }: { canDeliver: boolean }) {
+  const { lines, subtotal, isOpen, setOpen, setQuantity, locationId, setLocationId, delivering, setDelivering } = useCart();
+  const [address, setAddress] = useState(EMPTY_ADDRESS);
   const [name, setName] = useState("");
   const [error, setError] = useState("");
   const [submitting, setSubmitting] = useState(false);
@@ -29,6 +33,9 @@ export function CartDrawer() {
     return item ? [{ item, quantity }] : [];
   });
 
+  const edit = (field: keyof typeof EMPTY_ADDRESS) => (event: ChangeEvent<HTMLInputElement>) =>
+    setAddress((current) => ({ ...current, [field]: event.target.value }));
+
   async function checkout(event: FormEvent) {
     event.preventDefault();
     setError("");
@@ -37,7 +44,7 @@ export function CartDrawer() {
       const response = await fetch("/api/checkout", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ lines, locationId, name }),
+        body: JSON.stringify({ lines, locationId, name, delivery: delivering ? address : undefined }),
       });
       const data = await response.json();
       if (!response.ok) throw new Error(data.error);
@@ -86,8 +93,19 @@ export function CartDrawer() {
               ))}
             </ul>
 
+            {canDeliver && (
+              <div className="choice" role="group" aria-label="Pickup or delivery">
+                <button type="button" aria-pressed={!delivering} onClick={() => setDelivering(false)}>
+                  Pickup
+                </button>
+                <button type="button" aria-pressed={delivering} onClick={() => setDelivering(true)}>
+                  Delivery
+                </button>
+              </div>
+            )}
+
             <label>
-              Pickup location
+              {delivering ? "Deliver from" : "Pickup location"}
               <select
                 required
                 value={closedIds.includes(locationId) ? "" : locationId}
@@ -109,6 +127,44 @@ export function CartDrawer() {
               <input required maxLength={80} value={name} onChange={(e) => setName(e.target.value)} />
             </label>
 
+            {delivering && (
+              <>
+                <label>
+                  Street address
+                  <input required autoComplete="address-line1" value={address.street} onChange={edit("street")} />
+                </label>
+                <label>
+                  Apt or suite (optional)
+                  <input autoComplete="address-line2" value={address.unit} onChange={edit("unit")} />
+                </label>
+                <div className="drawer__row">
+                  <label>
+                    City
+                    <input required autoComplete="address-level2" value={address.city} onChange={edit("city")} />
+                  </label>
+                  <label>
+                    ZIP
+                    <input
+                      required
+                      inputMode="numeric"
+                      pattern="\d{5}"
+                      autoComplete="postal-code"
+                      value={address.zip}
+                      onChange={edit("zip")}
+                    />
+                  </label>
+                </div>
+                <label>
+                  Phone for the driver
+                  <input required type="tel" autoComplete="tel" value={address.phone} onChange={edit("phone")} />
+                </label>
+                <label>
+                  Note for the driver (optional)
+                  <input maxLength={200} placeholder="Gate code, leave at door…" value={address.notes} onChange={edit("notes")} />
+                </label>
+              </>
+            )}
+
             <div className="drawer__total">
               <span>Subtotal</span>
               <strong>{formatPrice(subtotal)}</strong>
@@ -117,7 +173,9 @@ export function CartDrawer() {
             <button className="btn btn--block" disabled={submitting}>
               {submitting ? "Heading to checkout…" : "Checkout"}
             </button>
-            <p className="fine-print">Secure payment by Stripe.</p>
+            <p className="fine-print">
+              {delivering && "Delivery fee is added at checkout. "}Secure payment by Stripe.
+            </p>
           </form>
         )}
       </aside>

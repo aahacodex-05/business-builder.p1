@@ -66,7 +66,7 @@ export default async function ShopOrders({ params }: { params: Promise<{ shop: s
 
 function OrderCard({ order }: { order: Order }) {
   return (
-    <li className="order">
+    <li className={`order${order.delivery ? " order--delivery" : ""}`}>
       <div className="order__head">
         <h3>{order.name}</h3>
         <span>{formatTime(order.placedAt)}</span>
@@ -78,12 +78,29 @@ function OrderCard({ order }: { order: Order }) {
           </li>
         ))}
       </ul>
+      {order.delivery && (
+        <div className="order__delivery">
+          <strong>Delivery</strong> to {order.delivery.address}
+          {order.delivery.notes && <p>“{order.delivery.notes}”</p>}
+          <p>
+            {order.delivery.booked ? "Driver booked" : "Booking a driver…"}
+            {order.delivery.trackingUrl && (
+              <>
+                {" · "}
+                <a href={order.delivery.trackingUrl} target="_blank" rel="noreferrer">
+                  Track
+                </a>
+              </>
+            )}
+          </p>
+        </div>
+      )}
       <p className="order__meta">
         {formatPrice(order.total)} paid{order.phone && <> · {formatPhone(order.phone)}</>}
       </p>
       {!order.pickedUp && (
         <form action={markPickedUp.bind(null, order.id)}>
-          <button className="btn btn--block">Picked up</button>
+          <button className="btn btn--block">{order.delivery ? "Handed to driver" : "Picked up"}</button>
         </form>
       )}
     </li>

@@ -59,7 +59,7 @@ The number can be typed with or without a space. Anything wrong with it (not iss
 
 ### `GET /api/staff/orders`
 
-Today's paid pickup orders at a shop, oldest first. Employees always get their own shop. The owner passes `?shop=webster-rd`.
+Today's paid pickup and delivery orders at a shop, oldest first. Employees always get their own shop. The owner passes `?shop=webster-rd`.
 
 ```json
 {
@@ -78,7 +78,13 @@ Today's paid pickup orders at a shop, oldest first. Employees always get their o
 }
 ```
 
-`total` is in cents. `phone` is missing when the customer didn't give one. An employee who asks for another shop gets `403`. Poll every 15 seconds like the tablet screen does.
+`total` is in cents. `phone` is missing when the customer didn't give one. Delivery orders also carry `delivery`:
+
+```json
+"delivery": { "address": "2200 SE Division St, Portland, OR 97202", "notes": "Gate 4", "booked": true, "trackingUrl": "https://…" }
+```
+
+`booked` is false until a driver is booked; `trackingUrl` may be missing. For delivery orders, "picked up" means handed to the driver. An employee who asks for another shop gets `403`. Poll every 15 seconds like the tablet screen does.
 
 ### `POST /api/staff/orders/{id}/picked-up`
 
