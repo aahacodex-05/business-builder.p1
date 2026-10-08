@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { ClearCart } from "@/components/ClearCart";
 import { formatPrice } from "@/data/menu";
+import { formatAddress } from "@/lib/couriers";
 import { stripe } from "@/lib/stripe";
 
 export const metadata = { title: "Order placed | Mocha Express Coffee" };
@@ -15,6 +16,7 @@ export default async function OrderSuccess({
     ? await stripe().checkout.sessions.retrieve(session_id).catch(() => null)
     : null;
   const paid = session?.payment_status === "paid";
+  const dropoff = session?.metadata?.delivery && JSON.parse(session.metadata.delivery);
 
   return (
     <main className="confirm">
@@ -23,9 +25,17 @@ export default async function OrderSuccess({
       <h1>{paid ? "Order's in!" : "We couldn't find that order"}</h1>
       {paid ? (
         <p>
-          Thanks, {session.metadata?.pickupName}. We're making your order now. Pick it up at{" "}
-          <strong>{session.metadata?.location}</strong>. Total paid:{" "}
-          {formatPrice(session.amount_total ?? 0)}.
+          Thanks, {session.metadata?.pickupName}. We're making your order now.{" "}
+          {dropoff ? (
+            <>
+              A driver will bring it to <strong>{formatAddress(dropoff)}</strong> and text you when they're close.
+            </>
+          ) : (
+            <>
+              Pick it up at <strong>{session.metadata?.location}</strong>.
+            </>
+          )}{" "}
+          Total paid: {formatPrice(session.amount_total ?? 0)}.
         </p>
       ) : (
         <p>If you were charged, show your email receipt at the counter and we'll sort it out.</p>
