@@ -334,13 +334,14 @@ form.addEventListener("submit", async e => {
 
   const body = Object.entries(data).map(([k, v]) => `${k}: ${v}`).join("\n");
   const subject = "Assessment request: " + data["Business name"];
-  window.location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
   document.getElementById("doneTitle").textContent = "One more step.";
   document.getElementById("doneMsg").textContent = "Your email app should open with your answers filled in. Press send and we'll reply within one business day.";
   document.getElementById("answers").value = `${subject}\n\n${body}`;
   document.getElementById("fallback").hidden = false;
   form.classList.add("sent");
   window.scrollTo(0, 0);
+  // Last, so a browser that blocks mailto links still shows the copyable answers
+  window.location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
 });
 
 const copyBtn = document.getElementById("copyBtn");
