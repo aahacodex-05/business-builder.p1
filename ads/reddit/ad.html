@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Reddit Ad</title>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,500..900&family=Public+Sans:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#15202E;--steel:#2E3B4E;--paper:#FFFFFF;--hivis:#FFC72C;--muted:#9AA4B2;--ok:#1F8A5B;--bad:#C2412D;
+  --display:"Archivo","Arial Narrow",Arial,sans-serif;--body:"Public Sans",system-ui,sans-serif}
+*{box-sizing:border-box}
+body{margin:0;background:var(--ink)}
+.ad{position:relative;overflow:hidden;background:var(--ink);color:var(--paper);font-family:var(--body);display:grid}
+.ad::before{content:"";position:absolute;inset:0;background:repeating-linear-gradient(-45deg,var(--hivis) 0 18px,var(--ink) 18px 36px);opacity:.9;clip-path:inset(0 0 calc(100% - 14px) 0)}
+.wide{width:1200px;height:628px;grid-template-columns:1.2fr 1fr;align-items:center;gap:56px;padding:40px 64px 0}
+.square{width:1080px;height:1080px;grid-template-rows:auto auto 1fr;gap:40px;padding:80px 80px 72px}
+.logo{display:flex;align-items:center;gap:12px;font:800 22px/1 var(--display);font-variation-settings:"wdth" 80;letter-spacing:.02em}
+.logo svg{width:34px;height:34px}
+h1{margin:32px 0 24px;font:900 72px/.95 var(--display);font-variation-settings:"wdth" 70;text-transform:uppercase;letter-spacing:-.01em}
+h1 em{font-style:normal;color:var(--hivis)}
+p{margin:0;font-size:24px;line-height:1.4;color:#C9D0D9;max-width:30ch}
+.card{align-self:center;background:var(--paper);color:var(--ink);border-radius:6px;padding:28px 32px;box-shadow:12px 12px 0 var(--hivis)}
+.card h2{margin:0 0 18px;font:800 24px/1 var(--display);font-variation-settings:"wdth" 85;text-transform:uppercase;letter-spacing:.03em;color:var(--steel)}
+.row{display:flex;justify-content:space-between;align-items:center;padding:14px 0;border-top:1px solid #E1E4E8;font-size:22px;font-weight:600}
+.tag{font-size:16px;font-weight:700;padding:6px 12px;border-radius:3px;color:#fff;text-transform:uppercase;letter-spacing:.05em}
+.have{background:var(--ok)}.miss{background:var(--bad)}
+.score{margin-top:16px;padding-top:16px;border-top:3px solid var(--ink);display:flex;justify-content:space-between;font:800 26px/1 var(--display);font-variation-settings:"wdth" 85;text-transform:uppercase}
+.score b{color:var(--bad)}
+.square h1{font-size:120px;margin:0}
+.square .card{align-self:start;padding:36px 44px}
+.square .row{font-size:28px;padding:18px 0}
+.square </style>
+</head>
+<body>
+
+<template id="logo"><svg viewBox="0 0 100 100" aria-hidden="true"><rect x="10" y="62" width="80" height="22" fill="#FFC72C"/><rect x="22" y="38" width="56" height="20" fill="#FFC72C"/><rect x="34" y="16" width="32" height="18" fill="#FFC72C"/></svg>THE BUSINESS BUILDER</template>
+<template id="card">
+  <h2>How findable are you?</h2>
+  <div class="row">Website <span class="tag have">Have it</span></div>
+  <div class="row">Google profile <span class="tag miss">Missing</span></div>
+  <div class="row">Reviews <span class="tag miss">Missing</span></div>
+  <div class="row">Social media <span class="tag miss">Missing</span></div>
+  <div class="score">Findability <b>25%</b></div>
+</template>
+
+<section class="ad wide" id="wide">
+  <div>
+    <div class="logo"></div>
+    <h1>Customers can't<br>hire you if they<br><em>can't find you.</em></h1>
+    <p>Website, Google, reviews and social. All handled for you.</p>
+  </div>
+  <div class="card"></div>
+</section>
+
+<section class="ad square" id="square">
+  <div class="logo"></div>
+  <h1>Customers can't<br>hire you if they<br><em>can't find you.</em></h1>
+  <div class="card"></div>
+</section>
+
+<script>
+for (const el of document.querySelectorAll(".logo")) el.append(document.getElementById("logo").content.cloneNode(true));
+for (const el of document.querySelectorAll(".card")) el.append(document.getElementById("card").content.cloneNode(true));
+</script>
+</body>
+</html>
