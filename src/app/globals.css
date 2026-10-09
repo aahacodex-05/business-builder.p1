@@ -20,6 +20,7 @@
   --shadow: 0 10px 30px rgb(42 23 18 / 12%);
   --display: var(--font-display), Georgia, serif;
   --body: var(--font-body), system-ui, sans-serif;
+  color-scheme: light;
 }
 
 * { box-sizing: border-box; margin: 0; }
@@ -35,6 +36,9 @@ body {
 img { display: block; max-width: 100%; height: auto; }
 
 a { color: inherit; }
+
+/* Controls stay light even when the browser or host asks for dark; otherwise their text turns white on our white fields. */
+button, input, select { color: inherit; color-scheme: light; }
 
 h1, h2, h3 { font-family: var(--display); line-height: 1.05; text-wrap: balance; }
 h1, h2 { font-variation-settings: "SOFT" 100, "WONK" 1; }

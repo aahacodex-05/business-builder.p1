@@ -93,7 +93,7 @@ export function CartDrawer() {
                 value={closedIds.includes(locationId) ? "" : locationId}
                 onChange={(e) => setLocationId(e.target.value)}
               >
-                <option value="" disabled>
+                <option value="" disabled hidden>
                   Choose a shop
                 </option>
                 {LOCATIONS.map((location) => (
