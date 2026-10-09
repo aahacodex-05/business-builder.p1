@@ -8,10 +8,12 @@ type CheckoutRequest = {
   lines: Record<string, number>;
   locationId: string;
   name: string;
+  /** Set by the Mocha Express app, which needs Stripe to send customers back into it. */
+  from?: "app";
 };
 
 export async function POST(request: Request) {
-  const { lines, locationId, name } = (await request.json()) as CheckoutRequest;
+  const { lines, locationId, name, from } = (await request.json()) as CheckoutRequest;
 
   const location = findLocation(locationId);
   if (!location) return error("Pick a pickup location.");
@@ -29,6 +31,7 @@ export async function POST(request: Request) {
   }
 
   const siteUrl = process.env.NEXT_PUBLIC_SITE_URL ?? new URL(request.url).origin;
+  const returnUrl = from === "app" ? `${siteUrl}/order/app` : undefined;
   const metadata = { locationId: location.id, location: location.name, pickupName: name.trim().slice(0, 80) };
 
   try {
@@ -45,10 +48,10 @@ export async function POST(request: Request) {
       metadata,
       payment_intent_data: { metadata },
       phone_number_collection: { enabled: true },
-      success_url: `${siteUrl}/order/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/menu`,
+      success_url: `${returnUrl ?? `${siteUrl}/order/success`}?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: returnUrl ?? `${siteUrl}/menu`,
     });
-    return NextResponse.json({ url: session.url });
+    return NextResponse.json({ url: session.url, id: session.id });
   } catch (err) {
     console.error("Checkout failed", err);
     return NextResponse.json(
