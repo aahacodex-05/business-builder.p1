@@ -28,9 +28,9 @@ It prints the Owner ID and `OWNER_CODE_HASH`. Give the owner the ID privately an
 
 ## Staff
 
-The small Staff link in the site footer opens `/orders`.
+The small Staff link in the site footer opens `/orders`. The Back button on the sign-in and sign-up screens returns to the page the person came from, or to the home page.
 
-- **Owner:** `/orders/owner` asks for the Owner ID. From there the owner gets an employee number for a shop, sees the team, cancels unused numbers and removes people's access (their sessions end at once). The owner can also open any shop's order screen.
+- **Owner:** the staff sign-in has no visible owner link. Tapping its logo five times in a row opens `/orders/owner`, which asks for the Owner ID. From there the owner gets an employee number for a shop, sees the team, cancels unused numbers and removes people's access (their sessions end at once). The owner can also open any shop's order screen.
 - **Employees:** sign up at `/orders/signup` with an employee number from the owner (8 digits, one use, good for 14 days) and choose a name and password. After that they sign in with the number and password and see only their own shop's screen.
 - **Order screen:** lists the shop's paid orders from today (read from Stripe), refreshes every 15 seconds, can chime when an order arrives, and has a "Picked up" button on each order. Set the tablet to never sleep.
 

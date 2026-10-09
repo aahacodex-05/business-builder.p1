@@ -17,7 +17,7 @@ export default async function Owner() {
           { name: "code", label: "Owner ID", autoComplete: "off", autoCapitalize: "characters", spellCheck: false },
         ]}
       >
-        <Link className="staff__link" href="/orders">
+        <Link className="staff__link" href="/orders" replace>
           Back to staff sign-in
         </Link>
       </AuthForm>

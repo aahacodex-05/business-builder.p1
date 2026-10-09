@@ -2,7 +2,7 @@
 
 import { refresh } from "next/cache";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { redirect, RedirectType } from "next/navigation";
 import { signInEmployee, signInOwner, signUpEmployee } from "@/lib/accounts";
 import { addEmployeeNumber, revokeEmployee as revokeEmployeeAccess } from "@/lib/employees";
 import { StaffError } from "@/lib/errors";
@@ -15,7 +15,10 @@ const text = (form: FormData, name: string) => {
   return typeof value === "string" ? value : "";
 };
 
-/** Runs a sign-in or sign-up. A problem comes back as the message to show; success sends the person on. */
+/**
+ * Runs a sign-in or sign-up. A problem comes back as the message to show; success sends the person on.
+ * The next screen replaces the form in the history, so Back from it leaves the staff area instead of returning to the form.
+ */
 async function enter(start: (ip: string) => Promise<Session>) {
   let session: Session;
   try {
@@ -26,7 +29,7 @@ async function enter(start: (ip: string) => Promise<Session>) {
   }
 
   await setWebSession(session);
-  redirect(session.staff.role === "owner" ? "/orders/owner" : `/orders/${session.staff.shop}`);
+  redirect(session.staff.role === "owner" ? "/orders/owner" : `/orders/${session.staff.shop}`, RedirectType.replace);
 }
 
 export async function signIn(form: FormData) {
@@ -45,7 +48,8 @@ export async function ownerSignIn(form: FormData) {
 
 export async function signOut() {
   await endWebSession();
-  redirect("/orders");
+  // Replaces the screen that just stopped working, so Back doesn't bounce off it.
+  redirect("/orders", RedirectType.replace);
 }
 
 export async function markPickedUp(orderId: string) {

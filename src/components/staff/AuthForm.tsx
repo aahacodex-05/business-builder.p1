@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition, type FormEvent, type InputHTMLAttributes, type ReactNode } from "react";
+import { OwnerEntryLogo } from "./OwnerEntryLogo";
 
 type Field = Pick<
   InputHTMLAttributes<HTMLInputElement>,
@@ -13,11 +14,13 @@ type Props = {
   fields: Field[];
   /** Answers with the message to show, or sends the person on when it works. */
   action: (form: FormData) => Promise<string | undefined>;
+  /** Makes the logo a hidden way into the owner sign-in (five taps). */
+  ownerEntry?: boolean;
   children?: ReactNode;
 };
 
 /** The sign-in, sign-up and owner forms. Typed values stay put when something is wrong. */
-export function AuthForm({ title, submit, fields, action, children }: Props) {
+export function AuthForm({ title, submit, fields, action, ownerEntry, children }: Props) {
   const [error, setError] = useState<string>();
   const [pending, startTransition] = useTransition();
 
@@ -29,7 +32,7 @@ export function AuthForm({ title, submit, fields, action, children }: Props) {
 
   return (
     <form className="staff__signin" onSubmit={onSubmit}>
-      <img src="/logo.png" alt="" width={96} height={96} />
+      {ownerEntry ? <OwnerEntryLogo /> : <img src="/logo.png" alt="" width={96} height={96} />}
       <h1>{title}</h1>
       {fields.map(({ label, hint, ...input }, i) => (
         <label key={input.name}>
