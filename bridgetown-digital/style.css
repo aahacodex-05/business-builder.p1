@@ -1,12 +1,14 @@
 :root {
-  --forest: #123A35;
-  --forest-2: #1C4E47;
-  --copper: #F2A65A;
-  --ink: #17201F;
-  --muted: #56625F;
-  --paper: #FBF8F2;
-  --sand: #F1ECE2;
-  --line: #DDD6C8;
+  --brand: #3B1FD1;
+  --rose: #FF3D7F;
+  --teal: #00C2A8;
+  --accent: #FFD23F;
+  --ink: #16133A;
+  --muted: #5A5775;
+  --paper: #FFFFFF;
+  --tint: #F4F1FF;
+  --line: #E2DDF7;
+  --hero: linear-gradient(135deg, #3B1FD1 0%, #8A2BE2 55%, #FF3D7F 100%);
   --display: "Bricolage Grotesque", system-ui, sans-serif;
   --body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 }
@@ -20,18 +22,18 @@ h1 { font-size: clamp(2.4rem, 8vw, 4.5rem); font-weight: 800; letter-spacing: -.
 h2 { font-size: clamp(1.8rem, 5vw, 2.6rem); font-weight: 800; }
 h3 { font-size: 1.25rem; font-weight: 700; }
 p { margin: 0 0 1em; }
-a { color: var(--forest); }
+a { color: var(--brand); }
 ul { padding-left: 1.2rem; margin: 0; }
 
 .wrap { width: min(1100px, 100% - 32px); margin-inline: auto; }
 section { padding: 4rem 0; }
-.alt { background: var(--sand); }
+.alt { background: var(--tint); }
 .sec-lede { color: var(--muted); font-size: 1.1rem; max-width: 40rem; margin-bottom: 2rem; }
 
 /* Buttons */
 .btn {
-  display: inline-block; padding: .85rem 1.4rem; border: 2px solid var(--copper); border-radius: 999px;
-  background: var(--copper); color: var(--ink); font: 600 1rem/1 var(--body); text-decoration: none; cursor: pointer;
+  display: inline-block; padding: .85rem 1.4rem; border: 2px solid var(--accent); border-radius: 999px;
+  background: var(--accent); color: var(--ink); font: 600 1rem/1 var(--body); text-decoration: none; cursor: pointer;
   transition: transform .15s ease;
 }
 .btn:hover { transform: translateY(-1px); }
@@ -39,7 +41,7 @@ section { padding: 4rem 0; }
 .btn.small { padding: .6rem 1rem; font-size: .9rem; }
 
 /* Header */
-.top { position: sticky; top: 0; z-index: 10; background: var(--forest); color: #fff; }
+.top { position: sticky; top: 0; z-index: 10; background: var(--brand); color: #fff; }
 .top .wrap { display: flex; align-items: center; justify-content: space-between; height: 64px; }
 .logo { display: flex; align-items: center; gap: .6rem; color: #fff; text-decoration: none; font: 700 1.15rem var(--display); }
 .nav { display: flex; align-items: center; gap: 1.5rem; }
@@ -48,14 +50,14 @@ section { padding: 4rem 0; }
 @media (min-width: 760px) { .nav a:not(.btn) { display: inline; } }
 
 /* Hero */
-.hero { position: relative; overflow: hidden; padding: 4rem 0 9rem; background: var(--forest); color: #fff; }
+.hero { position: relative; overflow: hidden; padding: 4rem 0 9rem; background: var(--hero); color: #fff; }
 .hero .wrap { position: relative; z-index: 1; }
-.eyebrow { color: var(--copper); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: .85rem; }
+.eyebrow { color: var(--accent); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: .85rem; }
 .lede { font-size: 1.2rem; max-width: 36rem; opacity: .9; }
 .ctas { display: flex; flex-wrap: wrap; gap: .75rem; margin: 2rem 0 1.25rem; }
 .hero .btn.ghost { border-color: #fff; }
 .hero-note { opacity: .8; font-size: .95rem; }
-.bridge { position: absolute; left: 0; bottom: 0; width: 100%; height: 160px; fill: none; stroke: var(--copper); stroke-width: 3; opacity: .45; }
+.bridge { position: absolute; left: 0; bottom: 0; width: 100%; height: 160px; fill: none; stroke: var(--accent); stroke-width: 3; opacity: .7; }
 .bridge .tower { stroke-width: 8; }
 .bridge .cable { stroke-width: 1.5; }
 
@@ -68,15 +70,19 @@ section { padding: 4rem 0; }
 }
 .card { background: #fff; border: 1px solid var(--line); border-radius: 16px; padding: 1.5rem; }
 .card p:last-child { margin-bottom: 0; }
+#services .card { border-top: 6px solid var(--card-color, var(--brand)); }
+#services .card:nth-child(2) { --card-color: var(--rose); }
+#services .card:nth-child(3) { --card-color: var(--teal); }
+#services .card:nth-child(4) { --card-color: var(--accent); }
 
 /* Pricing */
 .price-card { display: flex; flex-direction: column; }
-.price-card.featured { border: 2px solid var(--forest); }
-.price { font: 800 2.6rem/1 var(--display); color: var(--forest); margin-bottom: .4rem; }
+.price-card.featured { border: 3px solid var(--rose); box-shadow: 0 12px 30px -12px rgb(255 61 127 / .45); }
+.price { font: 800 2.6rem/1 var(--display); color: var(--brand); margin-bottom: .4rem; }
 .terms { color: var(--muted); font-size: .95rem; }
 .price-card li { margin-bottom: .35rem; }
 .quote-row { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 1rem; margin-top: 1rem; }
-.quote-row .btn { border-color: var(--forest); }
+.quote-row .btn { border-color: var(--brand); }
 
 /* Steps */
 .steps { list-style: none; padding: 0; display: grid; gap: 1.5rem; counter-reset: step; }
@@ -84,7 +90,7 @@ section { padding: 4rem 0; }
 .steps li { counter-increment: step; }
 .steps li::before {
   content: counter(step); display: grid; place-items: center; width: 2.5rem; height: 2.5rem; margin-bottom: .8rem;
-  border-radius: 50%; background: var(--forest); color: var(--copper); font: 800 1.1rem var(--display);
+  border-radius: 50%; background: var(--rose); color: #fff; font: 800 1.1rem var(--display);
 }
 .steps p { color: var(--muted); }
 
@@ -97,11 +103,11 @@ input, select, textarea {
   width: 100%; padding: .75rem .85rem; border: 1px solid var(--line); border-radius: 10px;
   font: 400 1rem var(--body); color: var(--ink); background: var(--paper);
 }
-input:focus, select:focus, textarea:focus { outline: 2px solid var(--forest); outline-offset: 1px; }
+input:focus, select:focus, textarea:focus { outline: 2px solid var(--brand); outline-offset: 1px; }
 form .btn { justify-self: start; }
 .form-status:empty { display: none; }
 
 /* Footer */
-.foot { background: var(--forest); color: #fff; padding: 2rem 0; font-size: .95rem; }
+.foot { background: var(--brand); color: #fff; padding: 2rem 0; font-size: .95rem; }
 .foot .wrap { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 1rem; }
-.foot a { color: var(--copper); }
+.foot a { color: var(--accent); }
