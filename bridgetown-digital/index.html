@@ -8,11 +8,11 @@
 <meta property="og:title" content="Bridgetown Digital">
 <meta property="og:description" content="Websites, custom apps, branding and online ads for Portland small businesses.">
 <meta property="og:type" content="website">
-<meta name="theme-color" content="#3B1FD1">
+<meta name="theme-color" content="#0D0A1E">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@600;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -21,7 +21,7 @@
   <div class="wrap">
     <a class="logo" href="#top" aria-label="Bridgetown Digital home">
       <img src="favicon.svg" alt="" width="32" height="32">
-      Bridgetown Digital
+      Bridgetown<span>Digital</span>
     </a>
     <nav class="nav" aria-label="Main">
       <a href="#services">Services</a>
@@ -34,27 +34,24 @@
 
 <main id="top">
   <section class="hero">
-    <div class="wrap">
+    <canvas id="bridge" aria-hidden="true"></canvas>
+    <div class="wrap hero-copy">
       <p class="eyebrow">Made in Bridgetown &middot; PDX</p>
-      <h1>Keep Portland weird. Keep your website working.</h1>
-      <p class="lede">Websites, custom apps, branding and online ads for the food carts, coffee shops, makers and neighborhood spots that make this city what it is. Local people, clear prices, no runaround.</p>
+      <h1>Keep Portland weird.<br><em>Keep your website working.</em></h1>
+      <p class="lede">Websites, apps, branding and ads for the food carts, coffee shops, makers and neighborhood spots that make this city what it is.</p>
       <div class="ctas">
         <a class="btn" href="#contact">Start your project</a>
         <a class="btn ghost" href="#pricing">See pricing</a>
       </div>
-      <p class="hero-note">Websites from <strong>$499</strong>, first month of hosting included.</p>
     </div>
-    <svg class="bridge" viewBox="0 0 1200 220" preserveAspectRatio="xMidYMax slice" aria-hidden="true">
-      <path d="M560 170 L700 30 L725 48 L745 38 L880 170 Z" class="mountain" />
-      <path d="M0 170 H1200" />
-      <path d="M300 40 V170 M900 40 V170" class="tower" />
-      <path d="M0 150 Q300 -10 300 40 Q600 190 900 40 Q900 -10 1200 150" />
-      <path d="M360 72 V170 M420 98 V170 M480 118 V170 M540 131 V170 M600 135 V170 M660 131 V170 M720 118 V170 M780 98 V170 M840 72 V170 M60 132 V170 M120 110 V170 M180 88 V170 M240 64 V170 M960 64 V170 M1020 88 V170 M1080 110 V170 M1140 132 V170" class="cable" />
-    </svg>
   </section>
 
   <div class="hoods" aria-label="Neighborhoods we serve">
-    <ul class="wrap">
+    <ul>
+      <li>Alberta</li><li>Hawthorne</li><li>Mississippi</li><li>Division</li><li>St. Johns</li>
+      <li>Sellwood</li><li>Pearl</li><li>Montavilla</li><li>Kenton</li><li>Foster-Powell</li>
+    </ul>
+    <ul aria-hidden="true">
       <li>Alberta</li><li>Hawthorne</li><li>Mississippi</li><li>Division</li><li>St. Johns</li>
       <li>Sellwood</li><li>Pearl</li><li>Montavilla</li><li>Kenton</li><li>Foster-Powell</li>
     </ul>
@@ -62,38 +59,43 @@
 
   <section id="services">
     <div class="wrap">
-      <h2>What we do</h2>
-      <p class="sec-lede">Everything your business needs to look sharp and get found online, from St. Johns to Sellwood.</p>
+      <p class="kicker">What we do</p>
+      <h2>Everything your shop needs to get found online.</h2>
       <div class="grid four">
-        <article class="card">
+        <article class="card service" style="--c: var(--rose)">
+          <span class="num">01</span>
           <h3>Websites</h3>
-          <p>Fast, mobile-friendly sites that tell customers who you are and make it easy to call, book or buy.</p>
+          <p>Fast, mobile-friendly sites that make it easy to call, book or buy.</p>
         </article>
-        <article class="card">
+        <article class="card service" style="--c: var(--orange)">
+          <span class="num">02</span>
           <h3>Custom apps</h3>
-          <p>An app that works with your website for ordering, booking or loyalty, launched on the App Store and Google Play.</p>
+          <p>Ordering, booking or loyalty apps on the App Store and Google Play.</p>
         </article>
-        <article class="card">
+        <article class="card service" style="--c: var(--teal)">
+          <span class="num">03</span>
           <h3>Ads &amp; marketing</h3>
-          <p>Google and online ads aimed at people near you who are ready to buy, with plain-English reports.</p>
+          <p>Google and online ads aimed at people nearby who are ready to buy.</p>
         </article>
-        <article class="card">
+        <article class="card service" style="--c: var(--yellow)">
+          <span class="num">04</span>
           <h3>Logos &amp; branding</h3>
-          <p>A logo, colors and fonts that make your business recognizable everywhere it shows up.</p>
+          <p>A logo, colors and fonts that make you recognizable everywhere.</p>
         </article>
       </div>
     </div>
   </section>
 
-  <section id="pricing" class="alt">
+  <section id="pricing">
     <div class="wrap">
-      <h2>Simple pricing</h2>
-      <p class="sec-lede">No packages to decode. Pick what you need.</p>
+      <p class="kicker">Pricing</p>
+      <h2>Straight-up prices. No packages to decode.</h2>
       <div class="grid three">
         <article class="card price-card featured">
+          <p class="tag">Most popular</p>
           <h3>Website</h3>
           <p class="price">$499</p>
-          <p class="terms">Build plus your first month of hosting, then $199/mo.</p>
+          <p class="terms">Build plus first month of hosting, then $199/mo.</p>
           <ul>
             <li>Custom, mobile-first design</li>
             <li>Contact form and click-to-call</li>
@@ -125,7 +127,7 @@
       <div class="card quote-row">
         <div>
           <h3>Ads &amp; online marketing</h3>
-          <p>Every budget and goal is different, so we price ad campaigns to fit.</p>
+          <p>Every budget is different, so we price campaigns to fit.</p>
         </div>
         <a class="btn ghost" href="#contact">Contact for a quote</a>
       </div>
@@ -134,18 +136,20 @@
 
   <section id="how">
     <div class="wrap">
-      <h2>How it works</h2>
+      <p class="kicker">How it works</p>
+      <h2>Three steps. Zero runaround.</h2>
       <ol class="steps">
         <li><h3>Grab a coffee</h3><p>Tell us about your business over coffee or a call. Free, no pressure.</p></li>
-        <li><h3>Build</h3><p>We design and build it, and you review it before anything goes live.</p></li>
+        <li><h3>We build it</h3><p>We design and build it, and you review it before anything goes live.</p></li>
         <li><h3>Launch</h3><p>We put it online and keep it running, so you can get back to work.</p></li>
       </ol>
     </div>
   </section>
 
-  <section id="contact" class="alt">
+  <section id="contact">
     <div class="wrap contact">
       <div>
+        <p class="kicker">Contact</p>
         <h2>Let's build something, neighbor.</h2>
         <p class="sec-lede">Send a few details and we'll get back to you within one business day.</p>
         <p>Or email <a data-email href="#"></a></p>
@@ -165,7 +169,7 @@
           </select>
         </label>
         <label>Message<textarea name="message" rows="4"></textarea></label>
-        <button class="btn" type="submit">Send</button>
+        <button class="btn" type="submit">Send it</button>
         <p class="form-status" role="status" aria-live="polite"></p>
       </form>
     </div>
@@ -180,5 +184,6 @@
 </footer>
 
 <script src="main.js"></script>
+<script type="module" src="bridge.js"></script>
 </body>
 </html>
